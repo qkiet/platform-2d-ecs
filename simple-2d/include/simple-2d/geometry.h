@@ -3,11 +3,16 @@
 #include <iostream>
 
 namespace simple_2d {
-    // XYCoordinate is a template class that represents a point in a 2D space.
+    /**
+     * @struct XYCoordinate
+     * @brief Represents a point in a 2D space.
+     *
+     * @tparam T The data type of the coordinates.
+     */
     template<typename T>
     struct XYCoordinate {
-        T x;
-        T y;
+        T x; ///< X-coordinate of the point.
+        T y; ///< Y-coordinate of the point.
         XYCoordinate& operator+=(const XYCoordinate &c) {
             this->x += c.x;
             this->y += c.y;
@@ -40,21 +45,37 @@ namespace simple_2d {
         }
     };
 
+    /**
+     * @struct RectangularDimension
+     * @brief Represents the dimensions of a rectangle.
+     *
+     * @tparam T The data type of the dimensions.
+     */
     template<typename T>
     struct RectangularDimension {
-        T height;
-        T width;
+        T height; ///< Height of the rectangle.
+        T width; ///< Width of the rectangle.
     };
 
+    /**
+     * @enum Axis
+     * @brief Represents the axis in a 2D space.
+     */
     enum Axis {
-        X,
-        Y,
+        X, ///< X-axis.
+        Y, ///< Y-axis.
     };
 
+    /**
+     * @struct Rectangle
+     * @brief Represents a rectangle defined by two coordinates.
+     *
+     * @tparam T The data type of the coordinates.
+     */
     template<typename T>
     struct Rectangle {
-        XYCoordinate<T> top_left;
-        XYCoordinate<T> bottom_right;
+        XYCoordinate<T> top_left; ///< Top-left coordinate of the rectangle.
+        XYCoordinate<T> bottom_right; ///< Bottom-right coordinate of the rectangle.
         template <typename T2>
         friend std::ostream &operator<<(std::ostream &os, Rectangle<T2> &rect) {
             os << "(" << rect.top_left.x << "," << rect.top_left.y << ")-(" << rect.bottom_right.x << "," << rect.bottom_right.y << ")";
@@ -62,6 +83,14 @@ namespace simple_2d {
         }
     };
 
+    /**
+     * @brief Checks if two rectangles overlap.
+     *
+     * @tparam T The data type of the coordinates.
+     * @param rect1 The first rectangle.
+     * @param rect2 The second rectangle.
+     * @return True if the rectangles overlap, false otherwise.
+     */
     template<typename T>
     bool AreRectanglesOverlap(Rectangle<T> rect1, Rectangle<T> rect2);
 };

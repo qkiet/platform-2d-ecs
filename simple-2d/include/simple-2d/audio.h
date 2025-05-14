@@ -11,45 +11,91 @@ namespace simple_2d {
 
     typedef std::shared_ptr<Mix_Music> ManagedMusic;
 
-    enum AudioFileType {
-        WAV,
-        MP3,
-    };
-
+    /**
+     * @class AudioSubsystem
+     * @brief Manages audio operations such as loading, playing, and stopping sounds and music.
+     *
+     * This class provides an interface to initialize the audio subsystem, load audio files,
+     * and control playback of sounds and music. It uses SDL_mixer for audio processing.
+     */
     class AudioSubsystem {
     public:
+        /**
+         * @brief Default constructor.
+         */
         AudioSubsystem() = default;
+
+        /**
+         * @brief Destructor to clean up resources.
+         */
         ~AudioSubsystem();
-        // Initialize audio subsystem. Separate constructor and initialization is deliberate choice because initialization
-        // may fail and we cannot handle failure in constructor.
+
+        /**
+         * @brief Initializes the audio subsystem.
+         *
+         * This method must be called before any audio operations can be performed.
+         * It separates construction from initialization to handle potential failures.
+         * @return Error code indicating success or failure of initialization.
+         */
         Error Init();
 
-        // Load a sound from a .wav file.
-        // @todo: support other file types.
+        /**
+         * @brief Loads a sound from a .wav file.
+         *
+         * @param path The file path to the .wav file.
+         * @return ManagedSound A shared pointer to the loaded sound.
+         */
         ManagedSound LoadSoundFromWavFile(const std::string &path);
 
-        // Load a music from a .mp3 file.
-        // @todo: support other file types.
+        /**
+         * @brief Loads music from a .mp3 file.
+         *
+         * @param path The file path to the .mp3 file.
+         * @return ManagedMusic A shared pointer to the loaded music.
+         */
         ManagedMusic LoadMusicFromMp3File(const std::string &path);
 
-        // Play a sound.
+        /**
+         * @brief Plays a sound.
+         *
+         * @param sound The sound to play.
+         * @param isLoop Whether the sound should loop.
+         * @return Error code indicating success or failure of playback.
+         */
         Error PlaySound(const ManagedSound &sound, bool isLoop = false);
 
-        // Play a music.
+        /**
+         * @brief Plays music.
+         *
+         * @param music The music to play.
+         * @param isLoop Whether the music should loop.
+         * @return Error code indicating success or failure of playback.
+         */
         Error PlayMusic(const ManagedMusic &music, bool isLoop = true);
 
-        // Stop a sound.
+        /**
+         * @brief Stops a sound.
+         *
+         * @param sound The sound to stop.
+         */
         void StopSound(const ManagedSound &sound);
 
-        // Stop a music.
+        /**
+         * @brief Stops the currently playing music.
+         */
         void StopCurrentMusic();
 
-        // Background clean up of audio resources in periodic manner.
+        /**
+         * @brief Periodically cleans up audio resources.
+         *
+         * This method should be called periodically to free up resources used by
+         * audio that is no longer playing.
+         */
         void PeriodicCleanUp();
 
     private:
-        std::map<int, ManagedSound> mPlayingSounds;
-        ManagedMusic mPlayingMusic;
+        std::map<int, ManagedSound> mPlayingSounds; ///< Map of currently playing sounds.
+        ManagedMusic mPlayingMusic; ///< Currently playing music.
     };
 }
 

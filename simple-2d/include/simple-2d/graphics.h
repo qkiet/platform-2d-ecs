@@ -19,20 +19,69 @@ namespace simple_2d {
 
     typedef std::shared_ptr<SDL_Texture> ManagedTexture;
 
+    /**
+     * @class GraphicsSubsystem
+     * @brief Manages graphics operations including window creation, rendering, and texture management.
+     *
+     * This class provides an interface to initialize the graphics subsystem, manage rendering buffers,
+     * and handle textures. It uses SDL for rendering operations.
+     */
     class GraphicsSubsystem {
     private:
-        SDL_Window *mWindow;
-        SDL_Renderer *mRenderer;
-        RectangularDimension<int> mWindowSize;
+        SDL_Window *mWindow; ///< Pointer to the SDL window.
+        SDL_Renderer *mRenderer; ///< Pointer to the SDL renderer.
+        RectangularDimension<int> mWindowSize; ///< Dimensions of the window.
     public:
+        /**
+         * @brief Constructs the GraphicsSubsystem object.
+         */
         GraphicsSubsystem();
+
+        /**
+         * @brief Destructor to clean up resources.
+         */
         ~GraphicsSubsystem();
-        // Initialize graphics subsystem with given window title, window size and background color. Separate constructor and initialization is
-        // deliberate choice because initialization may fail and we cannot handle failure in constructor.
+
+        /**
+         * @brief Initializes the graphics subsystem with specified parameters.
+         *
+         * @param window_title The title of the window.
+         * @param window_width The width of the window in pixels.
+         * @param window_height The height of the window in pixels.
+         * @param background_color The background color of the window.
+         * @return Error indicating success or failure of the initialization.
+         *
+         * This method separates construction and initialization to handle potential initialization failures.
+         */
         Error Init(const std::string window_title, size_t window_width, size_t window_height, Color background_color);
+
+        /**
+         * @brief Clears the render buffer.
+         *
+         * This method clears the current rendering target with the background color.
+         */
         void ClearRenderBuffer();
-        void PutTextureToBackBuffer( const ManagedTexture &texture, XYCoordinate<float> pos);
+
+        /**
+         * @brief Puts a texture onto the back buffer at a specified position.
+         *
+         * @param texture The texture to render.
+         * @param pos The position to render the texture at.
+         */
+        void PutTextureToBackBuffer(const ManagedTexture &texture, XYCoordinate<float> pos);
+
+        /**
+         * @brief Renders the back buffer to the screen.
+         *
+         * This method presents the current rendering target to the display.
+         */
         void RenderBackBuffer();
+
+        /**
+         * @brief Deinitializes the graphics subsystem.
+         *
+         * This method cleans up resources used by the graphics subsystem.
+         */
         void Deinit();
     };
 
