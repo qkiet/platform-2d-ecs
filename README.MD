@@ -1,0 +1,2 @@
+# Introduction
+Another 2D engine, but I stop using procedural programming because "too much keystroke has to use" and I suddenly found Entity-Component-System stuff to be...cool and want to implement it
