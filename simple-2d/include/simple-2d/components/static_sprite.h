@@ -13,25 +13,17 @@ namespace simple_2d {
         StaticSpriteComponent(ManagedTexture bundle);
         StaticSpriteComponent(ManagedTexture texture, XYCoordinate<float> position);
         ~StaticSpriteComponent() = default;
+        void SetEntityId(EntityId id);
+        EntityId GetEntityId() const;
         void SetTexture(ManagedTexture texture);
         void SetPosition(XYCoordinate<float> position);
         ManagedTexture GetTexture() const;
         XYCoordinate<float> GetPosition() const;
-        void Step();
+        Error Step();
     private:
-        XYCoordinate<float> mPosition;
+        // Offset from the entity's position to the top-left corner of the sprite
+        XYCoordinate<float> mOffset;
         ManagedTexture mTexture;
-    };
-
-    class StaticSpriteComponentManager: public ComponentManager {
-
-    private:
-        std::map<EntityId, std::shared_ptr<StaticSpriteComponent>> mSprites;
-    public:
-        StaticSpriteComponentManager() = default;
-        void RegisterNewEntity(EntityId id, std::shared_ptr<Component> component);
-        void Step();
-        void RemoveEntity(EntityId id);
     };
 }; // simple_2d
 

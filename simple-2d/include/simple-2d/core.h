@@ -5,6 +5,7 @@
 #include "generic_types.h"
 #include "audio.h"
 #include "components/static_sprite.h"
+#include "components/motion.h"
 
 namespace simple_2d {
     /**
@@ -15,7 +16,8 @@ namespace simple_2d {
     private:
         GraphicsSubsystem mGraphics; ///< Handles all graphics-related operations.
         AudioSubsystem mAudio; ///< Manages audio functionalities.
-        StaticSpriteComponentManager mStaticSpriteComponentManager;
+        ComponentManager mStaticSpriteComponentManager;
+        ComponentManager mMotionComponentManager;
 
     public:
         /**
@@ -53,8 +55,9 @@ namespace simple_2d {
 
         AudioSubsystem& GetAudio();
 
-        StaticSpriteComponentManager& GetStaticSpriteComponentManager();
+        ComponentManager& GetStaticSpriteComponentManager();
 
+        ComponentManager& GetMotionComponentManager();
     };
 };
 

@@ -13,6 +13,7 @@ namespace simple_2d {
     struct XYCoordinate {
         T x; ///< X-coordinate of the point.
         T y; ///< Y-coordinate of the point.
+        XYCoordinate() : x(0), y(0) {}
         XYCoordinate(T x, T y) : x(x), y(y) {}
         XYCoordinate& operator+=(const XYCoordinate &c) {
             this->x += c.x;

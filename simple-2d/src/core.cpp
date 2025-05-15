@@ -14,11 +14,9 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
 }
 
 void simple_2d::Engine::Step() {
-    BOOST_LOG_TRIVIAL(debug) << "Stepping engine";
-    BOOST_LOG_TRIVIAL(debug) << "engine ins: " << this;
-    BOOST_LOG_TRIVIAL(debug) << "Graphics ins from engine: " << &mGraphics;
     mGraphics.ClearRenderBuffer();
     mStaticSpriteComponentManager.Step();
+    mMotionComponentManager.Step();
     mAudio.PeriodicCleanUp();
     mGraphics.RenderBackBuffer();
 }
@@ -37,6 +35,11 @@ simple_2d::AudioSubsystem& simple_2d::Engine::GetAudio() {
     return mAudio;
 }
 
-simple_2d::StaticSpriteComponentManager& simple_2d::Engine::GetStaticSpriteComponentManager() {
+simple_2d::ComponentManager& simple_2d::Engine::GetStaticSpriteComponentManager() {
     return mStaticSpriteComponentManager;
+}
+
+
+simple_2d::ComponentManager& simple_2d::Engine::GetMotionComponentManager() {
+    return mMotionComponentManager;
 }
