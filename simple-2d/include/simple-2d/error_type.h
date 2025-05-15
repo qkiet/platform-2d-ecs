@@ -14,6 +14,7 @@ namespace simple_2d {
         LOAD_RESOURCES, ///< Error loading resources.
         NOT_EXISTS, ///< Resource does not exist.
         AUDIO, ///< Audio-related error.
+        RENDER, ///< Render-related error.
     };
 }; // simple_2d
 

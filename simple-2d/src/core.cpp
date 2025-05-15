@@ -1,4 +1,5 @@
 #include <simple-2d/core.h>
+#include <boost/log/trivial.hpp>
 
 simple_2d::Engine::Engine() : mGraphics() {}
 
@@ -13,7 +14,29 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
 }
 
 void simple_2d::Engine::Step() {
+    BOOST_LOG_TRIVIAL(debug) << "Stepping engine";
+    BOOST_LOG_TRIVIAL(debug) << "engine ins: " << this;
+    BOOST_LOG_TRIVIAL(debug) << "Graphics ins from engine: " << &mGraphics;
     mGraphics.ClearRenderBuffer();
-    mGraphics.RenderBackBuffer();
+    mStaticSpriteComponentManager.Step();
     mAudio.PeriodicCleanUp();
+    mGraphics.RenderBackBuffer();
+}
+
+
+simple_2d::Engine& simple_2d::Engine::GetInstance() {
+    static Engine instance;
+    return instance;
+}
+
+simple_2d::GraphicsSubsystem& simple_2d::Engine::GetGraphics() {
+    return mGraphics;
+}
+
+simple_2d::AudioSubsystem& simple_2d::Engine::GetAudio() {
+    return mAudio;
+}
+
+simple_2d::StaticSpriteComponentManager& simple_2d::Engine::GetStaticSpriteComponentManager() {
+    return mStaticSpriteComponentManager;
 }

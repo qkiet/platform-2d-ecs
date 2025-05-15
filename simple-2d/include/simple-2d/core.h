@@ -4,6 +4,7 @@
 #include "error_type.h"
 #include "generic_types.h"
 #include "audio.h"
+#include "components/static_sprite.h"
 
 namespace simple_2d {
     /**
@@ -14,11 +15,15 @@ namespace simple_2d {
     private:
         GraphicsSubsystem mGraphics; ///< Handles all graphics-related operations.
         AudioSubsystem mAudio; ///< Manages audio functionalities.
+        StaticSpriteComponentManager mStaticSpriteComponentManager;
+
     public:
         /**
          * @brief Constructs the Engine object.
          */
         Engine();
+        Engine(Engine const&) = delete;
+        void operator=(Engine const&) = delete; // Don't implement
         // Initialize engine with given window title, window size and background color. Separate constructor and initialization is
         // deliberate choice because initialization may fail and we cannot handle failure in constructor.
         /**
@@ -40,6 +45,15 @@ namespace simple_2d {
          * This method advances the engine's state by one tick, updating all subsystems accordingly.
          */
         void Step();
+
+        static Engine& GetInstance();
+
+
+        GraphicsSubsystem& GetGraphics();
+
+        AudioSubsystem& GetAudio();
+
+        StaticSpriteComponentManager& GetStaticSpriteComponentManager();
 
     };
 };

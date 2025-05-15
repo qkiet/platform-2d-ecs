@@ -19,6 +19,11 @@ namespace simple_2d {
 
     typedef std::shared_ptr<SDL_Texture> ManagedTexture;
 
+    struct BitmapBundle {
+        ManagedSurface surface;
+        ManagedTexture texture;
+    };
+
     /**
      * @class GraphicsSubsystem
      * @brief Manages graphics operations including window creation, rendering, and texture management.
@@ -56,11 +61,21 @@ namespace simple_2d {
         Error Init(const std::string window_title, size_t window_width, size_t window_height, Color background_color);
 
         /**
+         * @brief Loads an image file and returns a DrawableBundle.
+         *
+         * This method loads an image file and returns a DrawableBundle containing the surface and texture.
+         *
+         * @param path The path to the image file.
+         * @return DrawableBundle containing the surface and texture.
+         */
+        BitmapBundle LoadImageFromFile(const std::string &path);
+
+        /**
          * @brief Clears the render buffer.
          *
          * This method clears the current rendering target with the background color.
          */
-        void ClearRenderBuffer();
+        Error ClearRenderBuffer();
 
         /**
          * @brief Puts a texture onto the back buffer at a specified position.
@@ -68,14 +83,14 @@ namespace simple_2d {
          * @param texture The texture to render.
          * @param pos The position to render the texture at.
          */
-        void PutTextureToBackBuffer(const ManagedTexture &texture, XYCoordinate<float> pos);
+        Error PutTextureToBackBuffer(const ManagedTexture &texture, XYCoordinate<float> pos);
 
         /**
          * @brief Renders the back buffer to the screen.
          *
          * This method presents the current rendering target to the display.
          */
-        void RenderBackBuffer();
+        Error RenderBackBuffer();
 
         /**
          * @brief Deinitializes the graphics subsystem.

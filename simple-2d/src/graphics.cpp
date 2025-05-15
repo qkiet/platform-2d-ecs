@@ -1,7 +1,18 @@
 #include <simple-2d/graphics.h>
 #include <boost/log/trivial.hpp>
 #include <SDL3/SDL_init.h>
+#include "internal_utils.h"
+#include <SDL3_image/SDL_image.h>
 
+static auto surfaceDeleter = [](SDL_Surface *s) {
+    BOOST_LOG_TRIVIAL(debug) << "Destroy SDL_Surface " << s;
+    SDL_DestroySurface(s);
+};
+
+static auto textureDeleter = [](SDL_Texture *t) {
+    BOOST_LOG_TRIVIAL(debug) << "Destroy SDL_Texture " << t;
+    SDL_DestroyTexture(t);
+};
 
 simple_2d::GraphicsSubsystem::GraphicsSubsystem() : mWindow(nullptr), mRenderer(nullptr), mWindowSize() {}
 
@@ -32,16 +43,62 @@ simple_2d::GraphicsSubsystem::~GraphicsSubsystem() {
     BOOST_LOG_TRIVIAL(info) << "Graphics subsystem deinitialized successfully!";
 }
 
-void simple_2d::GraphicsSubsystem::ClearRenderBuffer() {
-    SDL_RenderClear(mRenderer);
+simple_2d::BitmapBundle simple_2d::GraphicsSubsystem::LoadImageFromFile(const std::string &path) {
+    BOOST_LOG_TRIVIAL(info) << "Loading image file " << path;
+    auto fullImagePath = GetRootPath() /= std::filesystem::path(path);
+    auto loadedSurface = IMG_Load(fullImagePath.c_str());
+    BitmapBundle ret = {
+        .surface = nullptr,
+        .texture = nullptr,
+    };
+    if (nullptr == loadedSurface) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to load image file " << path;
+        return ret;
+    }
+    auto texture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
+    if (nullptr == texture) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to create texture from surface! Get error: " << SDL_GetError();
+        return ret;
+    }
+    ret.surface = std::shared_ptr<SDL_Surface>(loadedSurface, surfaceDeleter);
+    ret.texture = std::shared_ptr<SDL_Texture>(texture, textureDeleter);
+    BOOST_LOG_TRIVIAL(info) << "Loaded image file " << path;
+    return ret;
 }
 
-void simple_2d::GraphicsSubsystem::PutTextureToBackBuffer(const ManagedTexture &texture, XYCoordinate<float> pos) {
+simple_2d::Error simple_2d::GraphicsSubsystem::ClearRenderBuffer() {
+    BOOST_LOG_TRIVIAL(debug) << "Clearing render buffer";
+    if (!SDL_RenderClear(mRenderer)) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to clear render buffer! Get error: \"" << SDL_GetError() << "\"";
+        return simple_2d::Error::RENDER;
+    }
+    return simple_2d::Error::OK;
+}
+
+simple_2d::Error simple_2d::GraphicsSubsystem::PutTextureToBackBuffer(const ManagedTexture &texture, XYCoordinate<float> pos) {
+    SDL_FRect dst = {
+        .x = pos.x,
+        .y = pos.y,
+        .w = (float) texture->w,
+        .h = (float) texture->h,
+    };
+    BOOST_LOG_TRIVIAL(debug) << "Putting texture to back buffer " << texture << " " << dst.x << " " << dst.y << " " << dst.w << " " << dst.h;
+    BOOST_LOG_TRIVIAL(debug) << "Renderer: " << mRenderer;
+    if (!SDL_RenderTexture(mRenderer, texture.get(), NULL, &dst)) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to put texture to back buffer! Get error: \"" << SDL_GetError() << "\"";
+        return simple_2d::Error::RENDER;
+    }
+    return simple_2d::Error::OK;
 }
 
 
-void simple_2d::GraphicsSubsystem::RenderBackBuffer() {
-    SDL_RenderPresent(mRenderer);
+simple_2d::Error simple_2d::GraphicsSubsystem::RenderBackBuffer() {
+    BOOST_LOG_TRIVIAL(debug) << "Rendering back buffer";
+    if (!SDL_RenderPresent(mRenderer)) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to render back buffer! Get error: \"" << SDL_GetError() << "\"";
+        return simple_2d::Error::RENDER;
+    }
+    return simple_2d::Error::OK;
 }
 
 void simple_2d::GraphicsSubsystem::Deinit() {
