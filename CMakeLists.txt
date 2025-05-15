@@ -13,6 +13,7 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/graphics.cpp
         simple-2d/src/audio.cpp
         simple-2d/src/internal_utils.cpp
+        simple-2d/src/components/static_sprite.cpp
 )
 
 add_executable(platform_2d
