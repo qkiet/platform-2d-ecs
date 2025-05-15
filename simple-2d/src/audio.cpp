@@ -67,7 +67,7 @@ simple_2d::Error simple_2d::AudioSubsystem::Init() {
     return Error::OK;
 }
 
-simple_2d::AudioSubsystem::~AudioSubsystem() {
+void simple_2d::AudioSubsystem::Deinit() {
     BOOST_LOG_TRIVIAL(info) << "Closing audio subsystem...";
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);

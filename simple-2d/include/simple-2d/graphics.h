@@ -45,7 +45,7 @@ namespace simple_2d {
         /**
          * @brief Destructor to clean up resources.
          */
-        ~GraphicsSubsystem();
+        ~GraphicsSubsystem() = default;
 
         /**
          * @brief Initializes the graphics subsystem with specified parameters.
@@ -59,6 +59,13 @@ namespace simple_2d {
          * This method separates construction and initialization to handle potential initialization failures.
          */
         Error Init(const std::string window_title, size_t window_width, size_t window_height, Color background_color);
+
+        /**
+         * @brief Deinitializes the graphics subsystem.
+         *
+         * This method cleans up resources used by the graphics subsystem.
+         */
+        void Deinit();
 
         /**
          * @brief Loads an image file and returns a DrawableBundle.
@@ -91,13 +98,6 @@ namespace simple_2d {
          * This method presents the current rendering target to the display.
          */
         Error RenderBackBuffer();
-
-        /**
-         * @brief Deinitializes the graphics subsystem.
-         *
-         * This method cleans up resources used by the graphics subsystem.
-         */
-        void Deinit();
     };
 
 }; // simple_2d

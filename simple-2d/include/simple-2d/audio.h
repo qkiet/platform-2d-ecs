@@ -28,7 +28,7 @@ namespace simple_2d {
         /**
          * @brief Destructor to clean up resources.
          */
-        ~AudioSubsystem();
+        ~AudioSubsystem() = default;
 
         /**
          * @brief Initializes the audio subsystem.
@@ -38,6 +38,11 @@ namespace simple_2d {
          * @return Error code indicating success or failure of initialization.
          */
         Error Init();
+
+        /**
+         * @brief Deinitializes the audio subsystem.
+         */
+        void Deinit();
 
         /**
          * @brief Loads a sound from a .wav file.

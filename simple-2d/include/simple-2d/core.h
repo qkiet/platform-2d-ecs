@@ -41,6 +41,8 @@ namespace simple_2d {
          */
         Error Init(const std::string window_title, size_t window_width, size_t window_height, Color background_color);
 
+        void Deinit();
+
         /**
          * @brief Processes a single tick of the engine.
          *

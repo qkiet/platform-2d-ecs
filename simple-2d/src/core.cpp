@@ -13,6 +13,13 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
     return Error::OK;
 }
 
+void simple_2d::Engine::Deinit() {
+    mGraphics.Deinit();
+    mAudio.Deinit();
+    SDL_Quit();
+    BOOST_LOG_TRIVIAL(info) << "Engine deinitialized successfully!";
+}
+
 void simple_2d::Engine::Step() {
     mGraphics.ClearRenderBuffer();
     mStaticSpriteComponentManager.Step();

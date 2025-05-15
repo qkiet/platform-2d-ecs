@@ -9,7 +9,7 @@ namespace simple_2d {
     class MotionComponent: public Component {
     public:
         MotionComponent();
-        ~MotionComponent() = default;
+        ~MotionComponent();
         void SetPosition(XYCoordinate<float> position);
         XYCoordinate<float> GetPosition() const;
         void SetVelocity(XYCoordinate<float> velocity);

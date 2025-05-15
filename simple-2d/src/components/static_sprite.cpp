@@ -2,16 +2,19 @@
 #include <simple-2d/core.h>
 #include <boost/log/trivial.hpp>
 simple_2d::StaticSpriteComponent::StaticSpriteComponent() : mTexture(nullptr), mOffset(0, 0) {
+    BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
     mEntityId = 0;
     mIsEntityIdSet = false;
 }
 simple_2d::StaticSpriteComponent::StaticSpriteComponent(ManagedTexture texture) : mTexture(texture), mOffset(0, 0) {
+    BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
     mEntityId = 0;
     mIsEntityIdSet = false;
 }
 simple_2d::StaticSpriteComponent::StaticSpriteComponent(ManagedTexture texture, XYCoordinate<float> position) :
-    mTexture(texture), mOffset(position) {
-        mEntityId = 0;
+        mTexture(texture), mOffset(position) {
+    BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
+    mEntityId = 0;
     mIsEntityIdSet = false;
 }
 

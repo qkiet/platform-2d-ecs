@@ -31,14 +31,16 @@ simple_2d::Error simple_2d::GraphicsSubsystem::Init(const std::string window_tit
         return simple_2d::Error::INIT;
     }
     SDL_SetRenderDrawColor(mRenderer, background_color.r, background_color.g, background_color.b, background_color.a);
-    BOOST_LOG_TRIVIAL(info) << "Graphics subsystem initialized successfully!";
+    BOOST_LOG_TRIVIAL(info) << "Graphics subsystem initialized successfully with renderer: " << mRenderer << " and window: " << mWindow;
     return simple_2d::Error::OK;
 }
 
-simple_2d::GraphicsSubsystem::~GraphicsSubsystem() {
-    BOOST_LOG_TRIVIAL(info) << "Deinitializing graphics subsystem...";
+void simple_2d::GraphicsSubsystem::Deinit() {
+    BOOST_LOG_TRIVIAL(info) << "Deinitializing graphics subsystem with renderer: " << mRenderer << " and window: " << mWindow;
     SDL_DestroyRenderer(mRenderer);
+    BOOST_LOG_TRIVIAL(debug) << "Destroyed renderer";
     SDL_DestroyWindow(mWindow);
+    BOOST_LOG_TRIVIAL(debug) << "Destroyed window";
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
     BOOST_LOG_TRIVIAL(info) << "Graphics subsystem deinitialized successfully!";
 }
@@ -62,6 +64,7 @@ simple_2d::BitmapBundle simple_2d::GraphicsSubsystem::LoadImageFromFile(const st
     }
     ret.surface = std::shared_ptr<SDL_Surface>(loadedSurface, surfaceDeleter);
     ret.texture = std::shared_ptr<SDL_Texture>(texture, textureDeleter);
+    BOOST_LOG_TRIVIAL(debug) << "Loaded surface: " << ret.surface << " texture: " << ret.texture;
     BOOST_LOG_TRIVIAL(info) << "Loaded image file " << path;
     return ret;
 }
@@ -100,9 +103,3 @@ simple_2d::Error simple_2d::GraphicsSubsystem::RenderBackBuffer() {
     }
     return simple_2d::Error::OK;
 }
-
-void simple_2d::GraphicsSubsystem::Deinit() {
-}
-
-
-

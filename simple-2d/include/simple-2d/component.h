@@ -22,6 +22,8 @@ namespace simple_2d {
 
     class ComponentManager {
     public:
+        ComponentManager();
+        ~ComponentManager();
         void RegisterNewEntity(EntityId id, std::shared_ptr<Component> component);
         std::pair<Error, std::shared_ptr<Component>> GetComponent(EntityId id);
         void Step();

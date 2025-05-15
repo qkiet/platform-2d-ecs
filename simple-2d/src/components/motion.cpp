@@ -1,8 +1,14 @@
 #include <simple-2d/components/motion.h>
+#include <boost/log/trivial.hpp>
 
 simple_2d::MotionComponent::MotionComponent(): mPosition(0, 0), mVelocity(0, 0), mAcceleration(0, 0) {
+    BOOST_LOG_TRIVIAL(debug) << "MotionComponent constructor " << this;
     mEntityId = 0;
     mIsEntityIdSet = false;
+}
+
+simple_2d::MotionComponent::~MotionComponent() {
+    BOOST_LOG_TRIVIAL(debug) << "MotionComponent destructor " << this;
 }
 
 void simple_2d::MotionComponent::SetPosition(XYCoordinate<float> position) {

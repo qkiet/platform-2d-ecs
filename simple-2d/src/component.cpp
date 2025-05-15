@@ -1,5 +1,14 @@
 #include <simple-2d/component.h>
 #include <boost/log/trivial.hpp>
+
+simple_2d::ComponentManager::ComponentManager() {
+    BOOST_LOG_TRIVIAL(debug) << "ComponentManager constructor " << this;
+}
+
+simple_2d::ComponentManager::~ComponentManager() {
+    BOOST_LOG_TRIVIAL(debug) << "ComponentManager destructor " << this;
+}
+
 void simple_2d::Component::SetEntityId(EntityId id) {
     if (mIsEntityIdSet) {
         BOOST_LOG_TRIVIAL(error) << "Entity ID is already set";
