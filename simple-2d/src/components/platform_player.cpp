@@ -67,8 +67,6 @@ simple_2d::Error simple_2d::PlatformPlayer::Step() {
         motionComponent->SetVelocityOneAxis(Axis::Y, -JUMP_INITIAL_SPEED);
         mWantToJump = false;
     }
-    // @todo: handling gravity should not be done here. Could be a separate component
-    motionComponent->SetAccelerationOneAxis(Axis::Y, GRAVITY);
     return Error::OK;
 }
 
