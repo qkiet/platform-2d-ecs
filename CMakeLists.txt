@@ -18,6 +18,7 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/components/motion.cpp
         simple-2d/src/components/platform_player.cpp
         simple-2d/src/components/downward_gravity.cpp
+        simple-2d/src/components/animated_sprite.cpp
 )
 
 add_executable(platform_2d
