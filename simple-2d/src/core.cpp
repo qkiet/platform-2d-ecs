@@ -36,6 +36,7 @@ simple_2d::Error simple_2d::Engine::Step() {
         }
     }
     mPlatformPlayerComponentManager.Step();
+    mDownwardGravityComponentManager.Step();
     mStaticSpriteComponentManager.Step();
     mMotionComponentManager.Step();
     mAudio.PeriodicCleanUp();
@@ -77,6 +78,10 @@ simple_2d::GraphicsSubsystem& simple_2d::Engine::GetGraphics() {
 
 simple_2d::AudioSubsystem& simple_2d::Engine::GetAudio() {
     return mAudio;
+}
+
+simple_2d::ComponentManager& simple_2d::Engine::GetDownwardGravityComponentManager() {
+    return mDownwardGravityComponentManager;
 }
 
 simple_2d::ComponentManager& simple_2d::Engine::GetStaticSpriteComponentManager() {

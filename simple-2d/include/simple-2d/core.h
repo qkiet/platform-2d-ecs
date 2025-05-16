@@ -20,6 +20,7 @@ namespace simple_2d {
         ComponentManager mStaticSpriteComponentManager;
         ComponentManager mMotionComponentManager;
         ComponentManager mPlatformPlayerComponentManager;
+        ComponentManager mDownwardGravityComponentManager;
         struct OnEventsCallback {
             ComponentEventsCallback callback;
             std::shared_ptr<Component> component;
@@ -71,6 +72,8 @@ namespace simple_2d {
         ComponentManager& GetMotionComponentManager();
 
         ComponentManager& GetPlatformPlayerComponentManager();
+
+        ComponentManager& GetDownwardGravityComponentManager();
 
         Error RegisterPlatformPlayerEventCallback(SDL_EventType event_type, ComponentEventsCallback callback, EntityId entity_id);
     };
