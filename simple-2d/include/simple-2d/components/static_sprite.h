@@ -13,13 +13,11 @@ namespace simple_2d {
         StaticSpriteComponent(ManagedTexture bundle);
         StaticSpriteComponent(ManagedTexture texture, XYCoordinate<float> position);
         ~StaticSpriteComponent() = default;
-        void SetEntityId(EntityId id);
-        EntityId GetEntityId() const;
         void SetTexture(ManagedTexture texture);
         void SetPosition(XYCoordinate<float> position);
         ManagedTexture GetTexture() const;
         XYCoordinate<float> GetPosition() const;
-        Error Step();
+        Error Step() override;
     private:
         // Offset from the entity's position to the top-left corner of the sprite
         XYCoordinate<float> mOffset;

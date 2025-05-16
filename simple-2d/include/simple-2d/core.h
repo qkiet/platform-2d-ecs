@@ -4,8 +4,9 @@
 #include "error_type.h"
 #include "generic_types.h"
 #include "audio.h"
-#include "components/static_sprite.h"
-#include "components/motion.h"
+#include "component.h"
+#include <map>
+#include <SDL3/SDL_events.h>
 
 namespace simple_2d {
     /**
@@ -18,6 +19,14 @@ namespace simple_2d {
         AudioSubsystem mAudio; ///< Manages audio functionalities.
         ComponentManager mStaticSpriteComponentManager;
         ComponentManager mMotionComponentManager;
+        ComponentManager mPlatformPlayerComponentManager;
+        struct OnEventsCallback {
+            ComponentEventsCallback callback;
+            std::shared_ptr<Component> component;
+        };
+        std::vector<OnEventsCallback> mOnEventsCallbacks;
+        std::map<SDL_EventType, std::vector<OnEventsCallback>> mOnEventsCallbacksMap;
+        std::pair<Error, std::vector<SDL_Event>> GetEvents();
 
     public:
         /**
@@ -48,7 +57,7 @@ namespace simple_2d {
          *
          * This method advances the engine's state by one tick, updating all subsystems accordingly.
          */
-        void Step();
+        simple_2d::Error Step();
 
         static Engine& GetInstance();
 
@@ -60,6 +69,10 @@ namespace simple_2d {
         ComponentManager& GetStaticSpriteComponentManager();
 
         ComponentManager& GetMotionComponentManager();
+
+        ComponentManager& GetPlatformPlayerComponentManager();
+
+        Error RegisterPlatformPlayerEventCallback(SDL_EventType event_type, ComponentEventsCallback callback, EntityId entity_id);
     };
 };
 

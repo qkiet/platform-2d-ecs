@@ -1,6 +1,8 @@
 #include <simple-2d/components/static_sprite.h>
 #include <simple-2d/core.h>
+#include <simple-2d/components/motion.h>
 #include <boost/log/trivial.hpp>
+
 simple_2d::StaticSpriteComponent::StaticSpriteComponent() : mTexture(nullptr), mOffset(0, 0) {
     BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
     mEntityId = 0;

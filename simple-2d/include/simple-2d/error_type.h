@@ -15,6 +15,7 @@ namespace simple_2d {
         NOT_EXISTS, ///< Resource does not exist.
         AUDIO, ///< Audio-related error.
         RENDER, ///< Render-related error.
+        QUIT, ///< Quit event.
     };
 }; // simple_2d
 
