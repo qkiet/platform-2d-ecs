@@ -39,6 +39,7 @@ simple_2d::Error simple_2d::Engine::Step() {
     mDownwardGravityComponentManager.Step();
     mStaticSpriteComponentManager.Step();
     mMotionComponentManager.Step();
+    mAnimatedSpriteComponentManager.Step();
     mAudio.PeriodicCleanUp();
     mGraphics.RenderBackBuffer();
     return Error::OK;
@@ -88,6 +89,9 @@ simple_2d::ComponentManager& simple_2d::Engine::GetStaticSpriteComponentManager(
     return mStaticSpriteComponentManager;
 }
 
+simple_2d::ComponentManager& simple_2d::Engine::GetAnimatedSpriteComponentManager() {
+    return mAnimatedSpriteComponentManager;
+}
 
 simple_2d::ComponentManager& simple_2d::Engine::GetMotionComponentManager() {
     return mMotionComponentManager;

@@ -18,6 +18,7 @@ namespace simple_2d {
         GraphicsSubsystem mGraphics; ///< Handles all graphics-related operations.
         AudioSubsystem mAudio; ///< Manages audio functionalities.
         ComponentManager mStaticSpriteComponentManager;
+        ComponentManager mAnimatedSpriteComponentManager;
         ComponentManager mMotionComponentManager;
         ComponentManager mPlatformPlayerComponentManager;
         ComponentManager mDownwardGravityComponentManager;
@@ -68,6 +69,8 @@ namespace simple_2d {
         AudioSubsystem& GetAudio();
 
         ComponentManager& GetStaticSpriteComponentManager();
+
+        ComponentManager& GetAnimatedSpriteComponentManager();
 
         ComponentManager& GetMotionComponentManager();
 
