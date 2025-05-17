@@ -4,6 +4,9 @@
 #include <cstdint>
 
 namespace simple_2d {
+
+    typedef uint32_t EntityId;
+
     /**
      * @struct Color
      * @brief Represents a color with red, green, blue, and alpha components.

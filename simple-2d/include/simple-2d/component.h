@@ -8,16 +8,16 @@
 #include <vector>
 #include <SDL3/SDL_events.h>
 #include <functional>
+#include "generic_types.h"
 
 namespace simple_2d {
-
-    typedef uint64_t EntityId;
 
     class Component {
     public:
         void SetEntityId(EntityId id);
         EntityId GetEntityId() const;
         virtual Error Step() = 0;
+        static std::shared_ptr<Component> CreateComponent(std::string componentName);
     protected:
         EntityId mEntityId;
         bool mIsEntityIdSet;
@@ -32,7 +32,7 @@ namespace simple_2d {
         ComponentManager();
         ~ComponentManager();
         void RegisterNewEntity(EntityId id, std::shared_ptr<Component> component);
-        std::pair<Error, std::shared_ptr<Component>> GetComponent(EntityId id);
+        std::shared_ptr<Component> GetComponent(EntityId id) const;
         void Step();
         void RemoveEntity(EntityId id);
     private:

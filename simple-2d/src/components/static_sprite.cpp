@@ -34,10 +34,15 @@ simple_2d::XYCoordinate<float> simple_2d::StaticSpriteComponent::GetPosition() c
 }
 
 simple_2d::Error simple_2d::StaticSpriteComponent::Step() {
-    auto [err, component] = simple_2d::Engine::GetInstance().GetMotionComponentManager().GetComponent(mEntityId);
-    if (simple_2d::Error::OK != err) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get position component";
-        return err;
+    auto componentManager = simple_2d::Engine::GetInstance().GetComponentManager("motion");
+    if (componentManager == nullptr) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+        return Error::NOT_EXISTS;
+    }
+    auto component = componentManager->GetComponent(mEntityId);
+    if (component == nullptr) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component for entity " << mEntityId;
+        return Error::NOT_EXISTS;
     }
     auto positionComponent = std::static_pointer_cast<MotionComponent>(component);
     auto position = positionComponent->GetPosition() + mOffset;

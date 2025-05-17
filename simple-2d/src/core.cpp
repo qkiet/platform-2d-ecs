@@ -1,7 +1,11 @@
 #include <simple-2d/core.h>
 #include <boost/log/trivial.hpp>
+#include <simple-2d/entity.h>
 
-simple_2d::Engine::Engine() : mGraphics() {
+simple_2d::Engine::Engine() : mGraphics(), mAudio() {
+    // Well, this is so weird. Have to call this boost log or well it will throw error "Failed to set TLS value: Invalid argument"
+    // @todo: figure out why this is happening
+    BOOST_LOG_TRIVIAL(debug) << "Engine constructor " << this;
 }
 
 simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t window_width, size_t window_height, Color background_color) {
@@ -10,6 +14,10 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
     }
     if (mAudio.Init() != Error::OK) {
         return Error::INIT;
+    }
+    std::vector<std::string> component_names = {"platform_player", "downward_gravity", "static_sprite", "motion", "animated_sprite"};
+    for (auto& component_name : component_names) {
+        mComponentManagers[component_name] = std::make_shared<ComponentManager>();
     }
     return Error::OK;
 }
@@ -35,11 +43,17 @@ simple_2d::Error simple_2d::Engine::Step() {
             eventCallback.callback(eventCallback.component, event);
         }
     }
-    mPlatformPlayerComponentManager.Step();
-    mDownwardGravityComponentManager.Step();
-    mStaticSpriteComponentManager.Step();
-    mMotionComponentManager.Step();
-    mAnimatedSpriteComponentManager.Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager platform_player";
+    mComponentManagers["platform_player"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager downward_gravity";
+    mComponentManagers["downward_gravity"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_sprite";
+    mComponentManagers["static_sprite"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager motion";
+    mComponentManagers["motion"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager animated_sprite";
+    mComponentManagers["animated_sprite"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component managers done";
     mAudio.PeriodicCleanUp();
     mGraphics.RenderBackBuffer();
     return Error::OK;
@@ -59,12 +73,12 @@ std::pair<simple_2d::Error, std::vector<SDL_Event>> simple_2d::Engine::GetEvents
     return {Error::OK, ret};
 }
 
-simple_2d::Error simple_2d::Engine::RegisterPlatformPlayerEventCallback(SDL_EventType event_type, ComponentEventsCallback callback, EntityId entity_id) {
-    auto [err, component] = mPlatformPlayerComponentManager.GetComponent(entity_id);
-    if (Error::OK != err) {
-        return err;
+simple_2d::Error simple_2d::Engine::RegisterPlatformPlayerEventCallback(SDL_EventType eventType, ComponentEventsCallback callback, EntityId entityId) {
+    auto component = mComponentManagers["platform_player"]->GetComponent(entityId);
+    if (component == nullptr) {
+        return Error::NOT_EXISTS;
     }
-    mOnEventsCallbacksMap[event_type].push_back({callback, component});
+    mOnEventsCallbacksMap[eventType].push_back({callback, component});
     return Error::OK;
 }
 
@@ -81,22 +95,11 @@ simple_2d::AudioSubsystem& simple_2d::Engine::GetAudio() {
     return mAudio;
 }
 
-simple_2d::ComponentManager& simple_2d::Engine::GetDownwardGravityComponentManager() {
-    return mDownwardGravityComponentManager;
-}
-
-simple_2d::ComponentManager& simple_2d::Engine::GetStaticSpriteComponentManager() {
-    return mStaticSpriteComponentManager;
-}
-
-simple_2d::ComponentManager& simple_2d::Engine::GetAnimatedSpriteComponentManager() {
-    return mAnimatedSpriteComponentManager;
-}
-
-simple_2d::ComponentManager& simple_2d::Engine::GetMotionComponentManager() {
-    return mMotionComponentManager;
-}
-
-simple_2d::ComponentManager& simple_2d::Engine::GetPlatformPlayerComponentManager() {
-    return mPlatformPlayerComponentManager;
+std::shared_ptr<simple_2d::ComponentManager> simple_2d::Engine::GetComponentManager(const std::string& componentName) const {
+    auto it = mComponentManagers.find(componentName);
+    if (it == mComponentManagers.end()) {
+        BOOST_LOG_TRIVIAL(error) << "Component manager not found: " << componentName;
+        return nullptr;
+    }
+    return it->second;
 }

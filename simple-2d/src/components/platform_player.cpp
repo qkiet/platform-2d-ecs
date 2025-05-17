@@ -50,10 +50,15 @@ void simple_2d::PlatformPlayer::RegisterEventsCallbacks() {
 }
 
 simple_2d::Error simple_2d::PlatformPlayer::Step() {
-    auto [err, component] = simple_2d::Engine::GetInstance().GetMotionComponentManager().GetComponent(mEntityId);
-    if (simple_2d::Error::OK != err) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component";
-        return err;
+    auto componentManager = simple_2d::Engine::GetInstance().GetComponentManager("motion");
+    if (componentManager == nullptr) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+        return Error::NOT_EXISTS;
+    }
+    auto component = componentManager->GetComponent(mEntityId);
+    if (component == nullptr) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component for entity " << mEntityId;
+        return Error::NOT_EXISTS;
     }
     auto motionComponent = std::static_pointer_cast<MotionComponent>(component);
     int direction = (int)mIsMovingRight - (int)mIsMovingLeft;
@@ -67,6 +72,7 @@ simple_2d::Error simple_2d::PlatformPlayer::Step() {
         motionComponent->SetVelocityOneAxis(Axis::Y, -JUMP_INITIAL_SPEED);
         mWantToJump = false;
     }
+    BOOST_LOG_TRIVIAL(debug) << "Step player";
     return Error::OK;
 }
 

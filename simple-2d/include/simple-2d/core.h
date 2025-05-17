@@ -17,11 +17,7 @@ namespace simple_2d {
     private:
         GraphicsSubsystem mGraphics; ///< Handles all graphics-related operations.
         AudioSubsystem mAudio; ///< Manages audio functionalities.
-        ComponentManager mStaticSpriteComponentManager;
-        ComponentManager mAnimatedSpriteComponentManager;
-        ComponentManager mMotionComponentManager;
-        ComponentManager mPlatformPlayerComponentManager;
-        ComponentManager mDownwardGravityComponentManager;
+        std::map<std::string, std::shared_ptr<ComponentManager>> mComponentManagers;
         struct OnEventsCallback {
             ComponentEventsCallback callback;
             std::shared_ptr<Component> component;
@@ -63,20 +59,11 @@ namespace simple_2d {
 
         static Engine& GetInstance();
 
-
         GraphicsSubsystem& GetGraphics();
 
         AudioSubsystem& GetAudio();
 
-        ComponentManager& GetStaticSpriteComponentManager();
-
-        ComponentManager& GetAnimatedSpriteComponentManager();
-
-        ComponentManager& GetMotionComponentManager();
-
-        ComponentManager& GetPlatformPlayerComponentManager();
-
-        ComponentManager& GetDownwardGravityComponentManager();
+        std::shared_ptr<ComponentManager> GetComponentManager(const std::string& component_name) const;
 
         Error RegisterPlatformPlayerEventCallback(SDL_EventType event_type, ComponentEventsCallback callback, EntityId entity_id);
     };
