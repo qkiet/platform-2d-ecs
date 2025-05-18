@@ -25,7 +25,7 @@ namespace simple_2d {
 
     // Event handler callback for component. Using reference to vector of events to avoid copying because engine has a
     // lot of components and it's expensive to copy the vector of events for each component.
-    typedef std::function<void(std::shared_ptr<Component>, const SDL_Event&)> ComponentEventsCallback;
+    typedef std::function<void(std::shared_ptr<Component>, const SDL_Event&)> ComponentEventCallback;
 
     class ComponentManager {
     public:

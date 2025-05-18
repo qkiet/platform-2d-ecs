@@ -39,8 +39,8 @@ simple_2d::Error simple_2d::Engine::Step() {
         return error;
     }
     for (auto& event : events) {
-        for (auto& eventCallback : mOnEventsCallbacksMap[(SDL_EventType)event.type]) {
-            eventCallback.callback(eventCallback.component, event);
+        for (auto& eventCallbackEntry : mOnEventCallbackEntriesMap[(SDL_EventType)event.type]) {
+            eventCallbackEntry.callback(eventCallbackEntry.component, event);
         }
     }
     BOOST_LOG_TRIVIAL(debug) << "Stepping component manager platform_player";
@@ -73,12 +73,12 @@ std::pair<simple_2d::Error, std::vector<SDL_Event>> simple_2d::Engine::GetEvents
     return {Error::OK, ret};
 }
 
-simple_2d::Error simple_2d::Engine::RegisterPlatformPlayerEventCallback(SDL_EventType eventType, ComponentEventsCallback callback, EntityId entityId) {
+simple_2d::Error simple_2d::Engine::RegisterPlatformPlayerEventCallback(SDL_EventType eventType, ComponentEventCallback callback, EntityId entityId) {
     auto component = mComponentManagers["platform_player"]->GetComponent(entityId);
     if (component == nullptr) {
         return Error::NOT_EXISTS;
     }
-    mOnEventsCallbacksMap[eventType].push_back({callback, component});
+    mOnEventCallbackEntriesMap[eventType].push_back({callback, component});
     return Error::OK;
 }
 

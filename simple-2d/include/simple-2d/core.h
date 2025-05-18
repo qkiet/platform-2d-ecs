@@ -18,12 +18,12 @@ namespace simple_2d {
         GraphicsSubsystem mGraphics; ///< Handles all graphics-related operations.
         AudioSubsystem mAudio; ///< Manages audio functionalities.
         std::map<std::string, std::shared_ptr<ComponentManager>> mComponentManagers;
-        struct OnEventsCallback {
-            ComponentEventsCallback callback;
+        struct OnEventCallbackEntry {
+            ComponentEventCallback callback;
             std::shared_ptr<Component> component;
         };
-        std::vector<OnEventsCallback> mOnEventsCallbacks;
-        std::map<SDL_EventType, std::vector<OnEventsCallback>> mOnEventsCallbacksMap;
+        std::vector<OnEventCallbackEntry> mOnEventCallbackEntries;
+        std::map<SDL_EventType, std::vector<OnEventCallbackEntry>> mOnEventCallbackEntriesMap;
         std::pair<Error, std::vector<SDL_Event>> GetEvents();
 
     public:
@@ -65,7 +65,7 @@ namespace simple_2d {
 
         std::shared_ptr<ComponentManager> GetComponentManager(const std::string& component_name) const;
 
-        Error RegisterPlatformPlayerEventCallback(SDL_EventType event_type, ComponentEventsCallback callback, EntityId entity_id);
+        Error RegisterPlatformPlayerEventCallback(SDL_EventType event_type, ComponentEventCallback callback, EntityId entity_id);
     };
 };
 
