@@ -7,3 +7,6 @@
 [submodule "3rd-party/SDL_mixer"]
 	path = 3rd-party/SDL_mixer
 	url = git@github.com:libsdl-org/SDL_mixer.git
+[submodule "3rd-party/json"]
+	path = 3rd-party/json
+	url = git@github.com:nlohmann/json.git
