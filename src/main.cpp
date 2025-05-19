@@ -5,6 +5,14 @@
 #include <vector>
 #include <simple-2d/core.h>
 #include <memory>
+#include <simple-2d/entity.h>
+#include <simple-2d/component.h>
+#include <simple-2d/components/static_sprite.h>
+#include <simple-2d/components/motion.h>
+#include <simple-2d/components/downward_gravity.h>
+#include <simple-2d/components/animated_sprite.h>
+#include <SDL3/SDL_events.h>
+#include "player.h"
 
 #define TICK_PER_SEC 60
 #define TICK_INTERVAL_MSEC 1000 / TICK_PER_SEC
@@ -20,31 +28,32 @@ static uint32_t get_remaining_ticks(const std::chrono::system_clock::time_point 
 int main(int argc, char *argv[]) {
     boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::debug);
 
-    std::unique_ptr<simple_2d::Engine> engine = std::make_unique<simple_2d::Engine>();
-    engine->Init("Flappy Bird", 800, 600, simple_2d::Color{255, 255, 255, 255});
-    auto last_tick_ts = std::chrono::high_resolution_clock::now();
+    auto &engine = simple_2d::Engine::GetInstance();
+    engine.Init("Flappy Bird", 800, 600, simple_2d::Color{255, 255, 255, 255});
+    auto lastTickTimestamp = std::chrono::high_resolution_clock::now();
+
+    Player player;
+    player.Init();
     while (true) {
 
-        auto remain_ticks = get_remaining_ticks(last_tick_ts);
-        if (!remain_ticks) {
+        auto remainTicks = get_remaining_ticks(lastTickTimestamp);
+        if (!remainTicks) {
             continue;
         }
-        auto processing_ticks = remain_ticks;
-        std::vector<SDL_Event> events_to_handle;
-        SDL_Event event;
-        SDL_PollEvent(&event);
-        if (event.type == SDL_EVENT_QUIT) {
-            BOOST_LOG_TRIVIAL(info) << "Receive quit";
+        auto processTicks = remainTicks;
+        auto isQuit = false;
+        while (processTicks--) {
+            auto error = engine.Step();
+            if (simple_2d::Error::QUIT == error) {
+                isQuit = true;
+                break;
+            }
+        }
+        if (isQuit) {
             break;
         }
-        if (event.type != SDL_EVENT_POLL_SENTINEL) {
-            events_to_handle.push_back(event);
-        }
-        while (processing_ticks--) {
-            engine->Step();
-        }
-        events_to_handle.clear();
-        last_tick_ts = std::chrono::high_resolution_clock::now();
+        lastTickTimestamp = std::chrono::high_resolution_clock::now();
     }
+    engine.Deinit();
     return 0;
 }

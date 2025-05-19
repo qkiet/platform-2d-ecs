@@ -22,6 +22,7 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/components/animated_sprite.cpp
         simple-2d/src/components/json.cpp
         simple-2d/src/components/behavior_script.cpp
+        src/player.cpp
 )
 
 add_executable(platform_2d
