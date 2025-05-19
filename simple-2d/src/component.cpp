@@ -2,9 +2,10 @@
 #include <boost/log/trivial.hpp>
 #include <simple-2d/components/animated_sprite.h>
 #include <simple-2d/components/motion.h>
-#include <simple-2d/components/platform_player.h>
 #include <simple-2d/components/downward_gravity.h>
 #include <simple-2d/components/static_sprite.h>
+#include <simple-2d/components/json.h>
+#include <simple-2d/components/behavior_script.h>
 
 simple_2d::ComponentManager::ComponentManager() {
     BOOST_LOG_TRIVIAL(debug) << "ComponentManager constructor " << this;
@@ -21,14 +22,17 @@ std::shared_ptr<simple_2d::Component> simple_2d::Component::CreateComponent(std:
     if (componentName == "motion") {
         return std::make_shared<simple_2d::MotionComponent>();
     }
-    if (componentName == "platform_player") {
-        return std::make_shared<simple_2d::PlatformPlayer>();
-    }
     if (componentName == "downward_gravity") {
         return std::make_shared<simple_2d::DownwardGravity>();
     }
     if (componentName == "static_sprite") {
         return std::make_shared<simple_2d::StaticSpriteComponent>();
+    }
+    if (componentName == "json") {
+        return std::make_shared<simple_2d::JsonComponent>();
+    }
+    if (componentName == "behavior_script") {
+        return std::make_shared<simple_2d::BehaviorScript>();
     }
     return nullptr;
 }

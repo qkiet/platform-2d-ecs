@@ -18,7 +18,7 @@ namespace simple_2d {
         EntityId GetEntityId() const;
         Error AddComponent(std::string componentName);
         std::shared_ptr<Component> GetComponent(std::string componentName) const;
-    private:
+    protected:
         EntityId mEntityId; // Entity ID is unique for each entity.
     };
 }

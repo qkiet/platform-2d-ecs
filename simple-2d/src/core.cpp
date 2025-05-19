@@ -15,7 +15,14 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
     if (mAudio.Init() != Error::OK) {
         return Error::INIT;
     }
-    std::vector<std::string> component_names = {"platform_player", "downward_gravity", "static_sprite", "motion", "animated_sprite"};
+    std::vector<std::string> component_names = {
+        "behavior_script",
+        "downward_gravity",
+        "static_sprite",
+        "motion",
+        "animated_sprite",
+        "json"
+    };
     for (auto& component_name : component_names) {
         mComponentManagers[component_name] = std::make_shared<ComponentManager>();
     }
@@ -31,20 +38,12 @@ void simple_2d::Engine::Deinit() {
 
 simple_2d::Error simple_2d::Engine::Step() {
     mGraphics.ClearRenderBuffer();
-    auto [error, events] = GetEvents();
-    for (auto& event : events) {
-        BOOST_LOG_TRIVIAL(debug) << "Event: " << event.type;
-    }
+    auto error = pollEvents();
     if (error == Error::QUIT) {
         return error;
     }
-    for (auto& event : events) {
-        for (auto& eventCallbackEntry : mOnEventCallbackEntriesMap[(SDL_EventType)event.type]) {
-            eventCallbackEntry.callback(eventCallbackEntry.component, event);
-        }
-    }
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager platform_player";
-    mComponentManagers["platform_player"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager behavior_script";
+    mComponentManagers["behavior_script"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component manager downward_gravity";
     mComponentManagers["downward_gravity"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_sprite";
@@ -59,27 +58,24 @@ simple_2d::Error simple_2d::Engine::Step() {
     return Error::OK;
 }
 
-std::pair<simple_2d::Error, std::vector<SDL_Event>> simple_2d::Engine::GetEvents() {
+simple_2d::Error simple_2d::Engine::pollEvents() {
     SDL_Event event;
-    std::vector<SDL_Event> ret;
-    SDL_PollEvent(&event);
-    if (event.type == SDL_EVENT_QUIT) {
-        BOOST_LOG_TRIVIAL(info) << "Receive quit";
-        return {Error::QUIT, {}};
+    mEvents.clear();
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_EVENT_QUIT) {
+            BOOST_LOG_TRIVIAL(info) << "Receive quit";
+            return Error::QUIT;
+        }
+        if (event.type != SDL_EVENT_POLL_SENTINEL) {
+            mEvents.push_back(event);
+        }
     }
-    if (event.type != SDL_EVENT_POLL_SENTINEL) {
-        ret.push_back(event);
-    }
-    return {Error::OK, ret};
+    return Error::OK;
 }
 
-simple_2d::Error simple_2d::Engine::RegisterPlatformPlayerEventCallback(SDL_EventType eventType, ComponentEventCallback callback, EntityId entityId) {
-    auto component = mComponentManagers["platform_player"]->GetComponent(entityId);
-    if (component == nullptr) {
-        return Error::NOT_EXISTS;
-    }
-    mOnEventCallbackEntriesMap[eventType].push_back({callback, component});
-    return Error::OK;
+
+std::vector<SDL_Event> simple_2d::Engine::GetEvents() const {
+    return mEvents;
 }
 
 simple_2d::Engine& simple_2d::Engine::GetInstance() {

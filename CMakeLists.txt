@@ -7,6 +7,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 add_subdirectory(3rd-party/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(3rd-party/SDL_image EXCLUDE_FROM_ALL)
 add_subdirectory(3rd-party/SDL_mixer EXCLUDE_FROM_ALL)
+add_subdirectory(3rd-party/json EXCLUDE_FROM_ALL)
 
 set(SIMPLE_2D_SRCS
         simple-2d/src/core.cpp
@@ -17,9 +18,10 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/entity.cpp
         simple-2d/src/components/static_sprite.cpp
         simple-2d/src/components/motion.cpp
-        simple-2d/src/components/platform_player.cpp
         simple-2d/src/components/downward_gravity.cpp
         simple-2d/src/components/animated_sprite.cpp
+        simple-2d/src/components/json.cpp
+        simple-2d/src/components/behavior_script.cpp
 )
 
 add_executable(platform_2d
@@ -30,7 +32,7 @@ add_executable(platform_2d
 
 target_include_directories(platform_2d PRIVATE simple-2d/include)
 
-target_link_libraries(platform_2d PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer boost_system boost_log)
+target_link_libraries(platform_2d PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer boost_system boost_log nlohmann_json::nlohmann_json)
 
 target_compile_options(platform_2d PRIVATE -DBOOST_LOG_DYN_LINK)
 
