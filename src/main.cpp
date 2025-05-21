@@ -13,6 +13,7 @@
 #include <simple-2d/components/animated_sprite.h>
 #include <SDL3/SDL_events.h>
 #include "player.h"
+#include "ground.h"
 
 #define TICK_PER_SEC 60
 #define TICK_INTERVAL_MSEC 1000 / TICK_PER_SEC
@@ -34,6 +35,8 @@ int main(int argc, char *argv[]) {
 
     Player player;
     player.Init();
+    Ground ground;
+    ground.Init();
     while (true) {
 
         auto remainTicks = get_remaining_ticks(lastTickTimestamp);
