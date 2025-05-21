@@ -22,7 +22,9 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/components/animated_sprite.cpp
         simple-2d/src/components/json.cpp
         simple-2d/src/components/behavior_script.cpp
+        simple-2d/src/components/static_repetitive_sprite.cpp
         src/player.cpp
+        src/ground.cpp
 )
 
 add_executable(platform_2d
@@ -49,7 +51,7 @@ install(FILES assets/player_idle_3.png
         DESTINATION assets
 )
 
-install(FILES assets/tile.png
+install(FILES assets/ground_tile.png
         DESTINATION assets
 )
 
