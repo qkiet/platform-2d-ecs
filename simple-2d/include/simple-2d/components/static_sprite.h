@@ -14,9 +14,9 @@ namespace simple_2d {
         StaticSpriteComponent(ManagedTexture texture, XYCoordinate<float> position);
         ~StaticSpriteComponent() = default;
         void SetTexture(ManagedTexture texture);
-        void SetPosition(XYCoordinate<float> position);
+        void SetOffset(XYCoordinate<float> offset);
         ManagedTexture GetTexture() const;
-        XYCoordinate<float> GetPosition() const;
+        XYCoordinate<float> GetOffset() const;
         Error Step() override;
     private:
         // Offset from the entity's position to the top-left corner of the sprite

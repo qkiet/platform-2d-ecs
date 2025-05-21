@@ -23,13 +23,13 @@ simple_2d::StaticSpriteComponent::StaticSpriteComponent(ManagedTexture texture, 
 void simple_2d::StaticSpriteComponent::SetTexture(ManagedTexture texture) {
     mTexture = texture;
 }
-void simple_2d::StaticSpriteComponent::SetPosition(XYCoordinate<float> position) {
-    mOffset = position;
+void simple_2d::StaticSpriteComponent::SetOffset(XYCoordinate<float> offset) {
+    mOffset = offset;
 }
 simple_2d::ManagedTexture simple_2d::StaticSpriteComponent::GetTexture() const {
     return mTexture;
 }
-simple_2d::XYCoordinate<float> simple_2d::StaticSpriteComponent::GetPosition() const {
+simple_2d::XYCoordinate<float> simple_2d::StaticSpriteComponent::GetOffset() const {
     return mOffset;
 }
 
