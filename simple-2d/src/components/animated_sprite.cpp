@@ -3,6 +3,10 @@
 #include <simple-2d/core.h>
 #include <simple-2d/components/motion.h>
 
+simple_2d::AnimatedSprite::AnimatedSprite(EntityId entityId) {
+    mEntityId = entityId;
+}
+
 void simple_2d::AnimatedSprite::AddAnimation(AnimationId animation_id, ManagedTexture texture, int frameLengthTicks) {
     BOOST_LOG_TRIVIAL(debug) << "Adding animation " << animation_id << " with texture " << texture << " and frame length " << frameLengthTicks;
     mAnimationTree[animation_id].push_back({texture, frameLengthTicks});

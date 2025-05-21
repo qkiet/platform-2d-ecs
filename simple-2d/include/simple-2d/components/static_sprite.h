@@ -9,9 +9,9 @@
 namespace simple_2d {
     class StaticSpriteComponent: public Component {
     public:
-        StaticSpriteComponent();
-        StaticSpriteComponent(ManagedTexture bundle);
-        StaticSpriteComponent(ManagedTexture texture, XYCoordinate<float> position);
+        StaticSpriteComponent(EntityId entityId);
+        StaticSpriteComponent(EntityId entityId, ManagedTexture bundle);
+        StaticSpriteComponent(EntityId entityId, ManagedTexture texture, XYCoordinate<float> position);
         ~StaticSpriteComponent() = default;
         void SetTexture(ManagedTexture texture);
         void SetOffset(XYCoordinate<float> offset);

@@ -1,6 +1,7 @@
 #include <simple-2d/components/json.h>
 
-simple_2d::JsonComponent::JsonComponent() {
+simple_2d::JsonComponent::JsonComponent(EntityId entityId) {
+    mEntityId = entityId;
     mJson = nlohmann::json();
 }
 

@@ -8,7 +8,7 @@
 namespace simple_2d {
     class MotionComponent: public Component {
     public:
-        MotionComponent();
+        MotionComponent(EntityId entityId);
         ~MotionComponent();
         void SetPosition(XYCoordinate<float> position);
         void SetPositionOneAxis(Axis axis, float position);

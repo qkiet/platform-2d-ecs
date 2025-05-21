@@ -17,9 +17,14 @@ namespace simple_2d {
         void SetEntityId(EntityId id);
         EntityId GetEntityId() const;
         virtual Error Step() = 0;
-        static std::shared_ptr<Component> CreateComponent(std::string componentName);
+        static std::shared_ptr<Component> CreateComponent(std::string componentName, EntityId entityId);
     protected:
+        // This field is used by component itself to locate other components with same entity id. For example, a game object
+        // that has sprite component might want to know motion component of itself to know where to draw the sprite.
         EntityId mEntityId;
+        // @deprecated Don't know what to do with this field. It's supposed to check whether the entity id is set or not. But now
+        // entity id is set in the constructor of the component and cannot be changed throughout component lifetime, so this field
+        // is not used.
         bool mIsEntityIdSet;
     };
 

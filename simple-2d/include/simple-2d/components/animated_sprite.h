@@ -9,10 +9,10 @@ namespace simple_2d {
 
     class AnimatedSprite : public Component {
     public:
-        AnimatedSprite() = default;
+        AnimatedSprite(EntityId entityId);
         ~AnimatedSprite() = default;
-        void AddAnimation(AnimationId animation_id, ManagedTexture texture, int frameLengthTicks);
-        Error PlayAnimation(AnimationId animation_id);
+        void AddAnimation(AnimationId animationId, ManagedTexture texture, int frameLengthTicks);
+        Error PlayAnimation(AnimationId animationId);
         Error Step() override;
         void SetOffset(XYCoordinate<float> offset);
         XYCoordinate<float> GetOffset() const;

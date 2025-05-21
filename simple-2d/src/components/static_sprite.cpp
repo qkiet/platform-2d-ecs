@@ -3,21 +3,18 @@
 #include <simple-2d/components/motion.h>
 #include <boost/log/trivial.hpp>
 
-simple_2d::StaticSpriteComponent::StaticSpriteComponent() : mTexture(nullptr), mOffset(0, 0) {
+simple_2d::StaticSpriteComponent::StaticSpriteComponent(EntityId entityId) : mTexture(nullptr), mOffset(0, 0) {
+    BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
+    mEntityId = entityId;
+}
+simple_2d::StaticSpriteComponent::StaticSpriteComponent(EntityId entityId, ManagedTexture texture) : mTexture(texture), mOffset(0, 0) {
     BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
     mEntityId = 0;
-    mIsEntityIdSet = false;
 }
-simple_2d::StaticSpriteComponent::StaticSpriteComponent(ManagedTexture texture) : mTexture(texture), mOffset(0, 0) {
-    BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
-    mEntityId = 0;
-    mIsEntityIdSet = false;
-}
-simple_2d::StaticSpriteComponent::StaticSpriteComponent(ManagedTexture texture, XYCoordinate<float> position) :
+simple_2d::StaticSpriteComponent::StaticSpriteComponent(EntityId entityId, ManagedTexture texture, XYCoordinate<float> position) :
         mTexture(texture), mOffset(position) {
     BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
-    mEntityId = 0;
-    mIsEntityIdSet = false;
+    mEntityId = entityId;
 }
 
 void simple_2d::StaticSpriteComponent::SetTexture(ManagedTexture texture) {

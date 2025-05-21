@@ -1,10 +1,9 @@
 #include <simple-2d/components/motion.h>
 #include <boost/log/trivial.hpp>
 
-simple_2d::MotionComponent::MotionComponent(): mPosition(0, 0), mVelocity(0, 0), mAcceleration(0, 0) {
+simple_2d::MotionComponent::MotionComponent(EntityId entityId): mPosition(0, 0), mVelocity(0, 0), mAcceleration(0, 0) {
     BOOST_LOG_TRIVIAL(debug) << "MotionComponent constructor " << this;
-    mEntityId = 0;
-    mIsEntityIdSet = false;
+    mEntityId = entityId;
 }
 
 simple_2d::MotionComponent::~MotionComponent() {
@@ -130,6 +129,7 @@ simple_2d::Error simple_2d::MotionComponent::Step() {
     BOOST_LOG_TRIVIAL(debug) << "MotionComponent step for entity " << mEntityId;
     BOOST_LOG_TRIVIAL(debug) << "Velocity: " << mVelocity;
     BOOST_LOG_TRIVIAL(debug) << "Acceleration: " << mAcceleration;
+    BOOST_LOG_TRIVIAL(debug) << "Position: " << mPosition;
     mPosition += mVelocity;
     mVelocity += mAcceleration;
     return simple_2d::Error::OK;

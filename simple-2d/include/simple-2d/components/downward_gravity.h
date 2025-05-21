@@ -6,7 +6,7 @@
 namespace simple_2d {
     class DownwardGravity : public Component {
     public:
-        DownwardGravity() = default;
+        DownwardGravity(EntityId entityId);
         ~DownwardGravity() = default;
         Error Step() override;
     };

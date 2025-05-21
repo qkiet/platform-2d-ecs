@@ -6,7 +6,7 @@
 namespace simple_2d {
     class JsonComponent : public Component {
     public:
-        JsonComponent();
+        JsonComponent(EntityId entityId);
         ~JsonComponent();
         void SetJson(const nlohmann::json& json);
         nlohmann::json GetJson() const;

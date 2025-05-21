@@ -4,6 +4,9 @@
 #include <boost/log/trivial.hpp>
 #define DEFAULT_GRAVITY 0.2
 
+simple_2d::DownwardGravity::DownwardGravity(EntityId entityId) {
+    mEntityId = entityId;
+}
 
 simple_2d::Error simple_2d::DownwardGravity::Step() {
     auto componentManager = simple_2d::Engine::GetInstance().GetComponentManager("motion");

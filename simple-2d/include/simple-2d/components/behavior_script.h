@@ -8,7 +8,7 @@ namespace simple_2d {
 
     class BehaviorScript : public Component {
     public:
-        BehaviorScript() = default;
+        BehaviorScript(EntityId entityId);
         ~BehaviorScript() = default;
         void SetOnTickEventCallback(std::function<void(EntityId)> callback);
         void SetOnKeyPressedEventCallback(std::function<void(EntityId, const SDL_Event &)> callback);

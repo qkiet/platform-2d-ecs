@@ -13,6 +13,10 @@ void simple_2d::BehaviorScript::SetOnKeyReleasedEventCallback(std::function<void
     mOnKeyReleasedCallback = callback;
 }
 
+simple_2d::BehaviorScript::BehaviorScript(EntityId entityId) {
+    mEntityId = entityId;
+}
+
 simple_2d::Error simple_2d::BehaviorScript::Step() {
     // Handle all key events first before tick
     for (auto& event : Engine::GetInstance().GetEvents()) {
