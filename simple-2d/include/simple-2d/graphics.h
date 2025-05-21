@@ -35,7 +35,7 @@ namespace simple_2d {
     private:
         SDL_Window *mWindow; ///< Pointer to the SDL window.
         SDL_Renderer *mRenderer; ///< Pointer to the SDL renderer.
-        RectangularDimension<int> mWindowSize; ///< Dimensions of the window.
+        RectangularDimensions<int> mWindowSize; ///< Dimensions of the window.
     public:
         /**
          * @brief Constructs the GraphicsSubsystem object.
@@ -98,6 +98,10 @@ namespace simple_2d {
          * This method presents the current rendering target to the display.
          */
         Error RenderBackBuffer();
+
+        ManagedSurface CreateBlankSurfaceFromDimensions(int width, int height, SDL_PixelFormat format);
+
+        ManagedTexture CreateTextureFromSurface(ManagedSurface surface);
     };
 
 }; // simple_2d

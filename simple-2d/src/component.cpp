@@ -6,6 +6,7 @@
 #include <simple-2d/components/static_sprite.h>
 #include <simple-2d/components/json.h>
 #include <simple-2d/components/behavior_script.h>
+#include <simple-2d/components/static_repetitive_sprite.h>
 
 simple_2d::ComponentManager::ComponentManager() {
     BOOST_LOG_TRIVIAL(debug) << "ComponentManager constructor " << this;
@@ -32,7 +33,10 @@ std::shared_ptr<simple_2d::Component> simple_2d::Component::CreateComponent(std:
         return std::make_shared<simple_2d::JsonComponent>(entityId);
     }
     if (componentName == "behavior_script") {
-        return std::make_shared<simple_2d::BehaviorScript>();
+        return std::make_shared<simple_2d::BehaviorScript>(entityId);
+    }
+    if (componentName == "static_repetitive_sprite") {
+        return std::make_shared<simple_2d::StaticRepetitiveSpriteComponent>(entityId);
     }
     BOOST_LOG_TRIVIAL(error) << "Failed to create component " << componentName;
     return nullptr;
@@ -58,6 +62,7 @@ void simple_2d::ComponentManager::RegisterNewEntity(simple_2d::EntityId id, std:
 std::shared_ptr<simple_2d::Component> simple_2d::ComponentManager::GetComponent(EntityId id) const {
     auto it = mComponents.find(id);
     if (it == mComponents.end()) {
+        BOOST_LOG_TRIVIAL(error) << "Component not found for entity " << id;
         return nullptr;
     }
     return it->second;

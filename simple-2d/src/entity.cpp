@@ -21,7 +21,7 @@ simple_2d::Error simple_2d::Entity::AddComponent(std::string componentName) {
         BOOST_LOG_TRIVIAL(error) << "Failed to get component manager for component " << componentName;
         return Error::NOT_EXISTS;
     }
-    auto component = Component::CreateComponent(componentName);
+    auto component = Component::CreateComponent(componentName, mEntityId);
     if (component == nullptr) {
         BOOST_LOG_TRIVIAL(error) << "Failed to create component " << componentName << " for entity " << mEntityId;
         return Error::NOT_EXISTS;

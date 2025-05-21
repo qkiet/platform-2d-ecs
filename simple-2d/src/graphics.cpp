@@ -103,3 +103,11 @@ simple_2d::Error simple_2d::GraphicsSubsystem::RenderBackBuffer() {
     }
     return simple_2d::Error::OK;
 }
+
+simple_2d::ManagedSurface simple_2d::GraphicsSubsystem::CreateBlankSurfaceFromDimensions(int width, int height, SDL_PixelFormat format) {
+    return std::shared_ptr<SDL_Surface>(SDL_CreateSurface(width, height, format), surfaceDeleter);
+}
+
+simple_2d::ManagedTexture simple_2d::GraphicsSubsystem::CreateTextureFromSurface(ManagedSurface surface) {
+    return std::shared_ptr<SDL_Texture>(SDL_CreateTextureFromSurface(mRenderer, surface.get()), textureDeleter);
+}

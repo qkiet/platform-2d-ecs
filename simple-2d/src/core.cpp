@@ -21,7 +21,8 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
         "static_sprite",
         "motion",
         "animated_sprite",
-        "json"
+        "json",
+        "static_repetitive_sprite"
     };
     for (auto& component_name : component_names) {
         mComponentManagers[component_name] = std::make_shared<ComponentManager>();
@@ -52,6 +53,8 @@ simple_2d::Error simple_2d::Engine::Step() {
     mComponentManagers["motion"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component manager animated_sprite";
     mComponentManagers["animated_sprite"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_repetitive_sprite";
+    mComponentManagers["static_repetitive_sprite"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component managers done";
     mAudio.PeriodicCleanUp();
     mGraphics.RenderBackBuffer();

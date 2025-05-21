@@ -48,15 +48,17 @@ namespace simple_2d {
     };
 
     /**
-     * @struct RectangularDimension
+     * @struct RectangularDimensions
      * @brief Represents the dimensions of a rectangle.
      *
      * @tparam T The data type of the dimensions.
      */
     template<typename T>
-    struct RectangularDimension {
+    struct RectangularDimensions {
         T height; ///< Height of the rectangle.
         T width; ///< Width of the rectangle.
+        RectangularDimensions() : height(0), width(0) {}
+        RectangularDimensions(T height, T width) : height(height), width(width) {}
     };
 
     /**
