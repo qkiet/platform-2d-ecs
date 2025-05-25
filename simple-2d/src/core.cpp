@@ -22,7 +22,8 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
         "motion",
         "animated_sprite",
         "json",
-        "static_repetitive_sprite"
+        "static_repetitive_sprite",
+        "collision_body"
     };
     for (auto& component_name : component_names) {
         mComponentManagers[component_name] = std::make_shared<ComponentManager>();
@@ -55,6 +56,8 @@ simple_2d::Error simple_2d::Engine::Step() {
     mComponentManagers["animated_sprite"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_repetitive_sprite";
     mComponentManagers["static_repetitive_sprite"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager collision_body";
+    mComponentManagers["collision_body"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component managers done";
     mAudio.PeriodicCleanUp();
     mGraphics.RenderBackBuffer();
@@ -101,4 +104,13 @@ std::shared_ptr<simple_2d::ComponentManager> simple_2d::Engine::GetComponentMana
         return nullptr;
     }
     return it->second;
+}
+
+simple_2d::Camera& simple_2d::Engine::GetCamera() {
+    return mCamera;
+}
+
+simple_2d::Error simple_2d::Engine::PrepareTextureForRendering(const ManagedTexture &texture, XYCoordinate<float> pos) {
+    auto translatedPosition = pos - mCamera.GetPosition();
+    return mGraphics.PutTextureToBackBuffer(texture, translatedPosition);
 }

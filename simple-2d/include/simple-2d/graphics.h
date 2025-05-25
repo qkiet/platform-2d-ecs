@@ -85,7 +85,8 @@ namespace simple_2d {
         Error ClearRenderBuffer();
 
         /**
-         * @brief Puts a texture onto the back buffer at a specified position.
+         * @brief Puts a texture onto the back buffer at a specified position. Never call this method directly.
+         * Instead use Engine::PrepareTextureForRendering because that method take camera perspective into rendering.
          *
          * @param texture The texture to render.
          * @param pos The position to render the texture at.

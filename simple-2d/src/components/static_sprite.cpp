@@ -43,6 +43,6 @@ simple_2d::Error simple_2d::StaticSpriteComponent::Step() {
     }
     auto positionComponent = std::static_pointer_cast<MotionComponent>(component);
     auto position = positionComponent->GetPosition() + mOffset;
-    simple_2d::Engine::GetInstance().GetGraphics().PutTextureToBackBuffer(mTexture, position);
+    simple_2d::Engine::GetInstance().PrepareTextureForRendering(mTexture, position);
     return simple_2d::Error::OK;
 }

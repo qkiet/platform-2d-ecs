@@ -7,6 +7,7 @@
 #include "component.h"
 #include <map>
 #include <SDL3/SDL_events.h>
+#include "camera.h"
 
 namespace simple_2d {
     /**
@@ -19,6 +20,7 @@ namespace simple_2d {
         AudioSubsystem mAudio; ///< Manages audio functionalities.
         std::map<std::string, std::shared_ptr<ComponentManager>> mComponentManagers;
         std::vector<SDL_Event> mEvents;
+        Camera mCamera;
         Error pollEvents();
     public:
         /**
@@ -56,6 +58,17 @@ namespace simple_2d {
         GraphicsSubsystem& GetGraphics();
 
         AudioSubsystem& GetAudio();
+
+        Camera& GetCamera();
+
+        /**
+         * @brief Prepares a texture for rendering. This method will take camera perspective into rendering.
+         *
+         * @param texture The texture to prepare for rendering.
+         * @param pos The position of the texture.
+         * @return Error indicating success or failure of the preparation.
+         */
+        Error PrepareTextureForRendering(const ManagedTexture &texture, XYCoordinate<float> pos);
 
         std::shared_ptr<ComponentManager> GetComponentManager(const std::string& component_name) const;
         std::vector<SDL_Event> GetEvents() const;

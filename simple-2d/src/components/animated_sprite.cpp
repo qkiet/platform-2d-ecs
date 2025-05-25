@@ -60,7 +60,7 @@ simple_2d::Error simple_2d::AnimatedSprite::RenderCurrentFrame() const {
     }
     auto motionComponent = std::static_pointer_cast<MotionComponent>(component);
     auto position = motionComponent->GetPosition() + mOffset;
-    Engine::GetInstance().GetGraphics().PutTextureToBackBuffer(frame, position);
+    Engine::GetInstance().PrepareTextureForRendering(frame, position);
     return Error::OK;
 }
 
