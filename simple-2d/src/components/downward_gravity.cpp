@@ -23,3 +23,10 @@ simple_2d::Error simple_2d::DownwardGravity::Step() {
     motionComponent->SetAccelerationOneAxis(Axis::Y, DEFAULT_GRAVITY);
     return Error::OK;
 }
+
+void simple_2d::DownwardGravityComponentManager::Step() {
+    for (auto &component : mComponents) {
+        auto downwardGravity = std::static_pointer_cast<DownwardGravity>(component.second);
+        downwardGravity->Step();
+    }
+}

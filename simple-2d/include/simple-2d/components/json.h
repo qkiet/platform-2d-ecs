@@ -14,5 +14,12 @@ namespace simple_2d {
     private:
         nlohmann::json mJson;
     };
+
+    class JsonComponentManager : public ComponentManager {
+    public:
+        JsonComponentManager() = default;
+        ~JsonComponentManager() = default;
+        void Step() override;
+    };
 }
 #endif // SIMPLE_2D_COMPONENTS_JSON_H

@@ -20,3 +20,10 @@ simple_2d::Error simple_2d::JsonComponent::Step() {
     // Do nothing. Simply a component to store json data.
     return Error::OK;
 }
+
+void simple_2d::JsonComponentManager::Step() {
+    for (auto &component : mComponents) {
+        auto jsonComponent = std::static_pointer_cast<JsonComponent>(component.second);
+        jsonComponent->Step();
+    }
+}

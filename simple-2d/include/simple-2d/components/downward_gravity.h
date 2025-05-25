@@ -10,6 +10,13 @@ namespace simple_2d {
         ~DownwardGravity() = default;
         Error Step() override;
     };
+
+    class DownwardGravityComponentManager : public ComponentManager {
+    public:
+        DownwardGravityComponentManager() = default;
+        ~DownwardGravityComponentManager() = default;
+        void Step() override;
+    };
 }
 
 #endif // SIMPLE_2D_DOWNWARD_GRAVITY_H

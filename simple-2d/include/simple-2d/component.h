@@ -38,9 +38,12 @@ namespace simple_2d {
         ~ComponentManager();
         void RegisterNewEntity(EntityId id, std::shared_ptr<Component> component);
         std::shared_ptr<Component> GetComponent(EntityId id) const;
-        void Step();
+        // How component manager process each tick is different. For example, most components only loop through all components
+        // and call their Step() method. But some components, like collison body, will have special logic that call each component's
+        // Step() method will result in lower performance. So this method is designed to be virtual and can be overridden by subclasses.
+        virtual void Step();
         void RemoveEntity(EntityId id);
-    private:
+    protected:
         std::map<EntityId, std::shared_ptr<Component>> mComponents;
     };
 }; // simple_2d

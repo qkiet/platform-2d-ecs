@@ -39,3 +39,9 @@ simple_2d::Error simple_2d::BehaviorScript::Step() {
 }
 
 
+void simple_2d::BehaviorScriptComponentManager::Step() {
+    for (auto &component : mComponents) {
+        auto behaviorScript = std::static_pointer_cast<BehaviorScript>(component.second);
+        behaviorScript->Step();
+    }
+}

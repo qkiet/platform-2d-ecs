@@ -1,5 +1,12 @@
 #include <simple-2d/scene.h>
 #include <boost/log/trivial.hpp>
+#include <simple-2d/components/behavior_script.h>
+#include <simple-2d/components/downward_gravity.h>
+#include <simple-2d/components/static_sprite.h>
+#include <simple-2d/components/motion.h>
+#include <simple-2d/components/animated_sprite.h>
+#include <simple-2d/components/json.h>
+#include <simple-2d/components/static_repetitive_sprite.h>
 
 simple_2d::Scene::Scene(RectangularDimensions<int> dimensions) : mDimensions(dimensions) {
 }
@@ -13,19 +20,13 @@ simple_2d::Error simple_2d::Scene::Init() {
         return Error::OK;
     }
     mIsInitialized = true;
-    std::vector<std::string> supportedComponentNames = {
-        "behavior_script",
-        "downward_gravity",
-        "static_sprite",
-        "motion",
-        "animated_sprite",
-        "json",
-        "static_repetitive_sprite",
-        "collision_body"
-    };
-    for (auto& component_name : supportedComponentNames) {
-        mComponentManagers[component_name] = std::make_shared<ComponentManager>();
-    }
+    mComponentManagers["behavior_script"] = std::make_shared<BehaviorScriptComponentManager>();
+    mComponentManagers["downward_gravity"] = std::make_shared<DownwardGravityComponentManager>();
+    mComponentManagers["static_sprite"] = std::make_shared<StaticSpriteComponentManager>();
+    mComponentManagers["motion"] = std::make_shared<MotionComponentManager>();
+    mComponentManagers["animated_sprite"] = std::make_shared<AnimatedSpriteComponentManager>();
+    mComponentManagers["json"] = std::make_shared<JsonComponentManager>();
+    mComponentManagers["static_repetitive_sprite"] = std::make_shared<StaticRepetitiveSpriteComponentManager>();
     return Error::OK;
 }
 

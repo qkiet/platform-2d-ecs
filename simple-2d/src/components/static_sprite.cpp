@@ -46,3 +46,10 @@ simple_2d::Error simple_2d::StaticSpriteComponent::Step() {
     simple_2d::Engine::GetInstance().PrepareTextureForRendering(mTexture, position);
     return simple_2d::Error::OK;
 }
+
+void simple_2d::StaticSpriteComponentManager::Step() {
+    for (auto &component : mComponents) {
+        auto staticSprite = std::static_pointer_cast<StaticSpriteComponent>(component.second);
+        staticSprite->Step();
+    }
+}

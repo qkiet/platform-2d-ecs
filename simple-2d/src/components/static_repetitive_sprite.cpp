@@ -92,3 +92,10 @@ void simple_2d::StaticRepetitiveSpriteComponent::RebuildTexture() {
     }
     mBuiltTexture = graphics.CreateTextureFromSurface(surface);
 }
+
+void simple_2d::StaticRepetitiveSpriteComponentManager::Step() {
+    for (auto &component : mComponents) {
+        auto staticRepetitiveSprite = std::static_pointer_cast<StaticRepetitiveSpriteComponent>(component.second);
+        staticRepetitiveSprite->Step();
+    }
+}

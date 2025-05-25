@@ -34,6 +34,13 @@ namespace simple_2d {
         XYCoordinate<float> mVelocity;
         XYCoordinate<float> mAcceleration;
     };
+
+    class MotionComponentManager : public ComponentManager {
+    public:
+        MotionComponentManager() = default;
+        ~MotionComponentManager() = default;
+        void Step() override;
+    };
 }
 
 

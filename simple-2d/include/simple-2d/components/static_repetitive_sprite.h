@@ -27,6 +27,13 @@ namespace simple_2d {
         bool mNeedsRebuildTexture;
         void RebuildTexture();
     };
+
+    class StaticRepetitiveSpriteComponentManager : public ComponentManager {
+    public:
+        StaticRepetitiveSpriteComponentManager() = default;
+        ~StaticRepetitiveSpriteComponentManager() = default;
+        void Step() override;
+    };
 }; // simple_2d
 
 #endif // SIMPLE_2D_COMPONENT_STATIC_REPETITIVE_SPRITE_H

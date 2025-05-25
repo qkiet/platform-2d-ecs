@@ -23,6 +23,13 @@ namespace simple_2d {
         XYCoordinate<float> mOffset;
         ManagedTexture mTexture;
     };
+
+    class StaticSpriteComponentManager : public ComponentManager {
+    public:
+        StaticSpriteComponentManager() = default;
+        ~StaticSpriteComponentManager() = default;
+        void Step() override;
+    };
 }; // simple_2d
 
 #endif // SIMPLE_2D_COMPONENT_SPRITE_H

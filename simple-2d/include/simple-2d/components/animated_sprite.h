@@ -38,5 +38,12 @@ namespace simple_2d {
         Error RenderCurrentFrame() const;
         Error UpdateAnimation();
     };
+
+    class AnimatedSpriteComponentManager : public ComponentManager {
+    public:
+        AnimatedSpriteComponentManager() = default;
+        ~AnimatedSpriteComponentManager() = default;
+        void Step() override;
+    };
 }
 #endif // SIMPLE_2D_COMPONENT_ANIMATED_SPRITE_H

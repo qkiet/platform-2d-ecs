@@ -19,6 +19,13 @@ namespace simple_2d {
         std::function<void(EntityId, const SDL_Event &)> mOnKeyPressedCallback;
         std::function<void(EntityId, const SDL_Event &)> mOnKeyReleasedCallback;
     };
+
+    class BehaviorScriptComponentManager : public ComponentManager {
+    public:
+        BehaviorScriptComponentManager() = default;
+        ~BehaviorScriptComponentManager() = default;
+        void Step() override;
+    };
 }
 
 #endif // SIMPLE_2D_COMPONENTS_BEHAVIOR_SCRIPT_H
