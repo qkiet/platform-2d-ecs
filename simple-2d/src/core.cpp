@@ -15,19 +15,6 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
     if (mAudio.Init() != Error::OK) {
         return Error::INIT;
     }
-    std::vector<std::string> component_names = {
-        "behavior_script",
-        "downward_gravity",
-        "static_sprite",
-        "motion",
-        "animated_sprite",
-        "json",
-        "static_repetitive_sprite",
-        "collision_body"
-    };
-    for (auto& component_name : component_names) {
-        mComponentManagers[component_name] = std::make_shared<ComponentManager>();
-    }
     return Error::OK;
 }
 
@@ -39,26 +26,16 @@ void simple_2d::Engine::Deinit() {
 }
 
 simple_2d::Error simple_2d::Engine::Step() {
-    mGraphics.ClearRenderBuffer();
     auto error = pollEvents();
     if (error == Error::QUIT) {
         return error;
     }
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager behavior_script";
-    mComponentManagers["behavior_script"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager downward_gravity";
-    mComponentManagers["downward_gravity"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_sprite";
-    mComponentManagers["static_sprite"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager motion";
-    mComponentManagers["motion"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager animated_sprite";
-    mComponentManagers["animated_sprite"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_repetitive_sprite";
-    mComponentManagers["static_repetitive_sprite"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager collision_body";
-    mComponentManagers["collision_body"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component managers done";
+    // It's OK that engine is not initialized with a scene. So we don't need to stop the game if there is no scene.
+    if (mCurrentScene == nullptr) {
+        return Error::OK;
+    }
+    mGraphics.ClearRenderBuffer();
+    mCurrentScene->Step();
     mAudio.PeriodicCleanUp();
     mGraphics.RenderBackBuffer();
     return Error::OK;
@@ -97,13 +74,23 @@ simple_2d::AudioSubsystem& simple_2d::Engine::GetAudio() {
     return mAudio;
 }
 
-std::shared_ptr<simple_2d::ComponentManager> simple_2d::Engine::GetComponentManager(const std::string& componentName) const {
-    auto it = mComponentManagers.find(componentName);
-    if (it == mComponentManagers.end()) {
-        BOOST_LOG_TRIVIAL(error) << "Component manager not found: " << componentName;
-        return nullptr;
+simple_2d::Error simple_2d::Engine::SetCurrentScene(std::shared_ptr<Scene> scene) {
+    mCurrentScene = scene;
+    // The scene can be initialized outside of engine, but we need to make sure it is initialized here or
+    // unexpected behavior may happen.
+    if (Error::OK != mCurrentScene->Init()) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to set and initialize scene";
+        return Error::INIT;
     }
-    return it->second;
+    return Error::OK;
+}
+
+std::shared_ptr<simple_2d::Scene> simple_2d::Engine::GetCurrentScene() const {
+    return mCurrentScene;
+}
+
+std::shared_ptr<simple_2d::ComponentManager> simple_2d::Engine::GetComponentManager(const std::string& componentName) const {
+    return mCurrentScene->GetComponentManager(componentName);
 }
 
 simple_2d::Camera& simple_2d::Engine::GetCamera() {

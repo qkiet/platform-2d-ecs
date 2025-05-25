@@ -17,6 +17,7 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/component.cpp
         simple-2d/src/entity.cpp
         simple-2d/src/camera.cpp
+        simple-2d/src/scene.cpp
         simple-2d/src/components/static_sprite.cpp
         simple-2d/src/components/motion.cpp
         simple-2d/src/components/downward_gravity.cpp

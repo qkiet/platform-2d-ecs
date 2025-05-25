@@ -8,6 +8,7 @@
 #include <map>
 #include <SDL3/SDL_events.h>
 #include "camera.h"
+#include "scene.h"
 
 namespace simple_2d {
     /**
@@ -18,10 +19,10 @@ namespace simple_2d {
     private:
         GraphicsSubsystem mGraphics; ///< Handles all graphics-related operations.
         AudioSubsystem mAudio; ///< Manages audio functionalities.
-        std::map<std::string, std::shared_ptr<ComponentManager>> mComponentManagers;
         std::vector<SDL_Event> mEvents;
         Camera mCamera;
         Error pollEvents();
+        std::shared_ptr<Scene> mCurrentScene;
     public:
         /**
          * @brief Constructs the Engine object.
@@ -60,6 +61,10 @@ namespace simple_2d {
         AudioSubsystem& GetAudio();
 
         Camera& GetCamera();
+
+        Error SetCurrentScene(std::shared_ptr<Scene> scene);
+
+        std::shared_ptr<Scene> GetCurrentScene() const;
 
         /**
          * @brief Prepares a texture for rendering. This method will take camera perspective into rendering.
