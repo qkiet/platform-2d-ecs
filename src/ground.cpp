@@ -21,7 +21,7 @@ simple_2d::Error Ground::Init() {
     repetitiveSprite->SetUnitSurface(groundBitmapBundle.surface);
     repetitiveSprite->SetDimensions(simple_2d::RectangularDimensions<int>(100, 600));
     auto motion = std::static_pointer_cast<simple_2d::MotionComponent>(GetComponent("motion"));
-    motion->SetPosition(simple_2d::XYCoordinate<float>(0, 300));
+    motion->SetPosition(simple_2d::XYCoordinate<float>(100, 400));
     return simple_2d::Error::OK;
 }
 

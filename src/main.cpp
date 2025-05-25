@@ -6,6 +6,7 @@
 #include <simple-2d/core.h>
 #include <memory>
 #include <simple-2d/entity.h>
+#include <simple-2d/scene.h>
 #include <simple-2d/component.h>
 #include <simple-2d/components/static_sprite.h>
 #include <simple-2d/components/motion.h>
@@ -32,11 +33,13 @@ int main(int argc, char *argv[]) {
     auto &engine = simple_2d::Engine::GetInstance();
     engine.Init("Flappy Bird", 800, 600, simple_2d::Color{255, 255, 255, 255});
     auto lastTickTimestamp = std::chrono::high_resolution_clock::now();
-
+    auto scene = std::make_shared<simple_2d::Scene>(simple_2d::RectangularDimensions<int>{800, 600});
+    engine.SetCurrentScene(scene);
     Player player;
     player.Init();
     Ground ground;
     ground.Init();
+    engine.GetCamera().SetPosition(simple_2d::XYCoordinate<float>(100, 100));
     while (true) {
 
         auto remainTicks = get_remaining_ticks(lastTickTimestamp);

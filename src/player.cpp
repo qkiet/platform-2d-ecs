@@ -108,7 +108,7 @@ simple_2d::Error Player::Init() {
     animatedSprite->AddAnimation(0, bitmap.texture, 5);
     animatedSprite->PlayAnimation(0);
     auto motion = std::static_pointer_cast<simple_2d::MotionComponent>(GetComponent("motion"));
-    motion->SetPosition(simple_2d::XYCoordinate<float>(100, 100));
+    motion->SetPosition(simple_2d::XYCoordinate<float>(200, 200));
     auto json = std::static_pointer_cast<simple_2d::JsonComponent>(GetComponent("json"));
     json->SetJson(nlohmann::json::parse(R"(
         {
