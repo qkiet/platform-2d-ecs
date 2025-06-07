@@ -17,6 +17,13 @@ namespace simple_2d {
         uint8_t b; ///< Blue component of the color
         uint8_t a; ///< Alpha component of the color (transparency)
     };
+
+    enum Direction {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+    };
 }
 
 #endif

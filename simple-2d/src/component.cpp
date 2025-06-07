@@ -7,6 +7,7 @@
 #include <simple-2d/components/json.h>
 #include <simple-2d/components/behavior_script.h>
 #include <simple-2d/components/static_repetitive_sprite.h>
+#include <simple-2d/components/collision_body.h>
 
 simple_2d::ComponentManager::ComponentManager() {
     BOOST_LOG_TRIVIAL(debug) << "ComponentManager constructor " << this;
@@ -38,6 +39,9 @@ std::shared_ptr<simple_2d::Component> simple_2d::Component::CreateComponent(std:
     if (componentName == "static_repetitive_sprite") {
         return std::make_shared<simple_2d::StaticRepetitiveSpriteComponent>(entityId);
     }
+    if (componentName == "collision_body") {
+        return std::make_shared<simple_2d::CollisionBodyComponent>(entityId);
+    }
     BOOST_LOG_TRIVIAL(error) << "Failed to create component " << componentName;
     return nullptr;
 }
@@ -67,12 +71,3 @@ std::shared_ptr<simple_2d::Component> simple_2d::ComponentManager::GetComponent(
     }
     return it->second;
 }
-
-void simple_2d::ComponentManager::Step() {
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager " << this;
-    for (auto& [entity, component] : mComponents) {
-        BOOST_LOG_TRIVIAL(debug) << "Stepping entity " << entity << " with component " <<  component;
-        component->Step();
-    }
-}
-

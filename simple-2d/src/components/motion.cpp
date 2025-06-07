@@ -21,6 +21,7 @@ void simple_2d::MotionComponent::SetPositionOneAxis(Axis axis, float position) {
             break;
         case Axis::Y:
             mPosition.y = position;
+            break;
     }
 }
 
@@ -35,8 +36,14 @@ void simple_2d::MotionComponent::IncrementPositionOneAxis(Axis axis, float posit
             break;
         case Axis::Y:
             mPosition.y += position;
+            break;
     }
 }
+
+simple_2d::XYCoordinate<float> simple_2d::MotionComponent::GetPositionNextTick() const {
+    return mPosition + mVelocity + mAcceleration;
+}
+
 simple_2d::XYCoordinate<float> simple_2d::MotionComponent::GetPosition() const {
     return mPosition;
 }
@@ -46,8 +53,10 @@ float simple_2d::MotionComponent::GetPositionOneAxis(Axis axis) const {
     switch (axis) {
         case Axis::X:
             ret = mPosition.x;
+            break;
         case Axis::Y:
             ret = mPosition.y;
+            break;
     }
     return ret;
 }
@@ -63,7 +72,12 @@ void simple_2d::MotionComponent::SetVelocityOneAxis(Axis axis, float velocity) {
             break;
         case Axis::Y:
             mVelocity.y = velocity;
+            break;
     }
+}
+
+simple_2d::XYCoordinate<float> simple_2d::MotionComponent::GetVelocityNextTick() const {
+    return mVelocity + mAcceleration;
 }
 
 
@@ -71,13 +85,17 @@ simple_2d::XYCoordinate<float> simple_2d::MotionComponent::GetVelocity() const {
     return mVelocity;
 }
 
+
+
 float simple_2d::MotionComponent::GetVelocityOneAxis(Axis axis) const {
     float ret = 0;
     switch (axis) {
         case Axis::X:
             ret = mVelocity.x;
+            break;
         case Axis::Y:
             ret = mVelocity.y;
+            break;
     }
     return ret;
 }
@@ -90,6 +108,10 @@ void simple_2d::MotionComponent::IncrementVelocityOneAxis(Axis axis, float veloc
     switch (axis) {
         case Axis::X:
             mVelocity.x += velocity;
+            break;
+        case Axis::Y:
+            mVelocity.y += velocity;
+            break;
     }
 }
 
@@ -106,8 +128,10 @@ float simple_2d::MotionComponent::GetAccelerationOneAxis(Axis axis) const {
     switch (axis) {
         case Axis::X:
             ret = mAcceleration.x;
+            break;
         case Axis::Y:
             ret = mAcceleration.y;
+            break;
     }
     return ret;
 }
@@ -122,6 +146,7 @@ void simple_2d::MotionComponent::SetAccelerationOneAxis(Axis axis, float acceler
             break;
         case Axis::Y:
             mAcceleration.y = acceleration;
+            break;
     }
 }
 
@@ -130,8 +155,8 @@ simple_2d::Error simple_2d::MotionComponent::Step() {
     BOOST_LOG_TRIVIAL(debug) << "Velocity: " << mVelocity;
     BOOST_LOG_TRIVIAL(debug) << "Acceleration: " << mAcceleration;
     BOOST_LOG_TRIVIAL(debug) << "Position: " << mPosition;
-    mPosition += mVelocity;
     mVelocity += mAcceleration;
+    mPosition += mVelocity;
     return simple_2d::Error::OK;
 }
 

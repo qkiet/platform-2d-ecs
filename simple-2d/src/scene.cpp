@@ -7,6 +7,7 @@
 #include <simple-2d/components/animated_sprite.h>
 #include <simple-2d/components/json.h>
 #include <simple-2d/components/static_repetitive_sprite.h>
+#include <simple-2d/components/collision_body.h>
 
 simple_2d::Scene::Scene(RectangularDimensions<int> dimensions) : mDimensions(dimensions) {
 }
@@ -27,6 +28,7 @@ simple_2d::Error simple_2d::Scene::Init() {
     mComponentManagers["animated_sprite"] = std::make_shared<AnimatedSpriteComponentManager>();
     mComponentManagers["json"] = std::make_shared<JsonComponentManager>();
     mComponentManagers["static_repetitive_sprite"] = std::make_shared<StaticRepetitiveSpriteComponentManager>();
+    mComponentManagers["collision_body"] = std::make_shared<CollisionBodyComponentManager>();
     return Error::OK;
 }
 
@@ -46,6 +48,8 @@ simple_2d::Error simple_2d::Scene::Step() {
     mComponentManagers["downward_gravity"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_sprite";
     mComponentManagers["static_sprite"]->Step();
+    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager collision_body";
+    mComponentManagers["collision_body"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component manager motion";
     mComponentManagers["motion"]->Step();
     BOOST_LOG_TRIVIAL(debug) << "Stepping component manager animated_sprite";

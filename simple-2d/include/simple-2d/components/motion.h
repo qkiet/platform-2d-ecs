@@ -13,12 +13,14 @@ namespace simple_2d {
         void SetPosition(XYCoordinate<float> position);
         void SetPositionOneAxis(Axis axis, float position);
         XYCoordinate<float> GetPosition() const;
+        XYCoordinate<float> GetPositionNextTick() const;
         float GetPositionOneAxis(Axis axis) const;
         void IncrementPosition(XYCoordinate<float> position);
         void IncrementPositionOneAxis(Axis axis, float position);
         void SetVelocity(XYCoordinate<float> velocity);
         void SetVelocityOneAxis(Axis axis, float velocity);
         XYCoordinate<float> GetVelocity() const;
+        XYCoordinate<float> GetVelocityNextTick() const;
         float GetVelocityOneAxis(Axis axis) const;
         void IncrementVelocity(XYCoordinate<float> velocity);
         void IncrementVelocityOneAxis(Axis axis, float velocity);
