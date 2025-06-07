@@ -21,15 +21,19 @@ simple_2d::AxisAlignedEdgesRelativePosition simple_2d::RelativePositionBetweenAx
     if (edge1.alignedAxis == Axis::X) {
         if (edge1.origin.y < edge2.origin.y) {
             return AxisAlignedEdgesRelativePosition::Above;
-        } else {
+        } else if (edge1.origin.y > edge2.origin.y) {
             return AxisAlignedEdgesRelativePosition::Below;
+        } else {
+            return AxisAlignedEdgesRelativePosition::Aligned;
         }
     }
     if (edge1.alignedAxis == Axis::Y) {
         if (edge1.origin.x < edge2.origin.x) {
             return AxisAlignedEdgesRelativePosition::LeftOf;
-        } else {
+        } else if (edge1.origin.x > edge2.origin.x) {
             return AxisAlignedEdgesRelativePosition::RightOf;
+        } else {
+            return AxisAlignedEdgesRelativePosition::Aligned;
         }
     }
     return AxisAlignedEdgesRelativePosition::Intersecting;

@@ -152,11 +152,9 @@ void simple_2d::MotionComponent::SetAccelerationOneAxis(Axis axis, float acceler
 
 simple_2d::Error simple_2d::MotionComponent::Step() {
     BOOST_LOG_TRIVIAL(debug) << "MotionComponent step for entity " << mEntityId;
-    BOOST_LOG_TRIVIAL(debug) << "Velocity: " << mVelocity;
-    BOOST_LOG_TRIVIAL(debug) << "Acceleration: " << mAcceleration;
-    BOOST_LOG_TRIVIAL(debug) << "Position: " << mPosition;
     mVelocity += mAcceleration;
     mPosition += mVelocity;
+    BOOST_LOG_TRIVIAL(debug) << "entity " << mEntityId << " velocity: " << mVelocity << " acceleration: " << mAcceleration << " position: " << mPosition;
     return simple_2d::Error::OK;
 }
 

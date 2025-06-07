@@ -60,10 +60,10 @@ namespace simple_2d {
      */
     template<typename T>
     struct RectangularDimensions {
-        T height; ///< Height of the rectangle.
-        T width; ///< Width of the rectangle.
-        RectangularDimensions() : height(0), width(0) {}
-        RectangularDimensions(T height, T width) : height(height), width(width) {}
+        T width; ///< Width of the rectangle. X axis
+        T height; ///< Height of the rectangle. Y axis
+        RectangularDimensions() : width(0), height(0) {}
+        RectangularDimensions(T width, T height) : width(width), height(height) {}
         template <typename T2>
         operator XYCoordinate<T2>() const {
             return XYCoordinate<T2>(width, height);
@@ -164,6 +164,7 @@ namespace simple_2d {
         Below, ///< 1st edge is below the 2nd edge.
         LeftOf, ///< 1st edge is to the left of the 2nd edge.
         RightOf, ///< 1st edge is to the right of the 2nd edge.
+        Aligned, ///< 1st edge is aligned with the 2nd edge.
         Intersecting, ///< 1st edge is intersecting the 2nd edge.
     };
 
