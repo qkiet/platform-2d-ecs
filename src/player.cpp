@@ -5,9 +5,10 @@
 #include <simple-2d/components/motion.h>
 #include <simple-2d/components/behavior_script.h>
 #include <simple-2d/components/json.h>
+#include <simple-2d/components/collision_body.h>
 
 #define MOVE_SPEED_PER_TICKS 3
-#define JUMP_INITIAL_SPEED 15
+#define JUMP_INITIAL_SPEED 12
 
 static void onKeyPressedEvent(simple_2d::EntityId entityId, const SDL_Event& event) {
     auto &engine = simple_2d::Engine::GetInstance();
@@ -68,6 +69,7 @@ static void onTickEvent(simple_2d::EntityId entityId) {
         BOOST_LOG_TRIVIAL(debug) << "Jump";
         motionComponent->SetVelocityOneAxis(simple_2d::Axis::Y, -JUMP_INITIAL_SPEED);
         jsonData["isJumping"] = true;
+        jsonData["wantToJump"] = false;
     }
     json->SetJson(jsonData);
 }
@@ -99,6 +101,11 @@ simple_2d::Error Player::Init() {
         BOOST_LOG_TRIVIAL(error) << "Failed to add json component";
         return error;
     }
+    error = AddComponent("collision_body");
+    if (error != simple_2d::Error::OK) {
+        BOOST_LOG_TRIVIAL(error) << "Failed to add collision_body component";
+        return error;
+    }
     auto animatedSprite = std::static_pointer_cast<simple_2d::AnimatedSprite>(GetComponent("animated_sprite"));
     auto bitmap = engine.GetGraphics().LoadImageFromFile("assets/player_idle_1.png");
     animatedSprite->AddAnimation(0, bitmap.texture, 5);
@@ -122,6 +129,23 @@ simple_2d::Error Player::Init() {
     behaviorScript->SetOnKeyPressedEventCallback(onKeyPressedEvent);
     behaviorScript->SetOnKeyReleasedEventCallback(onKeyReleasedEvent);
     behaviorScript->SetOnTickEventCallback(onTickEvent);
+    auto collisionBody = std::static_pointer_cast<simple_2d::CollisionBodyComponent>(GetComponent("collision_body"));
+    // @TODO: Very hard-cody. Will use another method to get size of sprite then apply to collision body
+    collisionBody->SetSize(simple_2d::RectangularDimensions<float>(60, 112));
+    collisionBody->SetEnabled(true);
+    collisionBody->SetOnCollisionCallback([](simple_2d::EntityId entityId1, simple_2d::EntityId entityId2) {
+        BOOST_LOG_TRIVIAL(info) << "Player collide with entity " << entityId2;
+        auto &engine = simple_2d::Engine::GetInstance();
+        auto jsonComponent1 = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId1));
+        auto jsonComponent2 = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId2));
+        auto jsonData1 = jsonComponent1->GetJson();
+        auto jsonData2 = jsonComponent2->GetJson();
+        if (jsonData2.contains("type") && jsonData2["type"] == "ground") {
+            jsonData1["isJumping"] = false;
+            jsonComponent1->SetJson(jsonData1);
+            BOOST_LOG_TRIVIAL(info) << "Player is not jumping anymore";
+        }
+    });
     return simple_2d::Error::OK;
 }
 
