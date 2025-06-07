@@ -18,6 +18,7 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/entity.cpp
         simple-2d/src/camera.cpp
         simple-2d/src/scene.cpp
+        simple-2d/src/geometry.cpp
         simple-2d/src/components/static_sprite.cpp
         simple-2d/src/components/motion.cpp
         simple-2d/src/components/downward_gravity.cpp
@@ -25,6 +26,7 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/components/json.cpp
         simple-2d/src/components/behavior_script.cpp
         simple-2d/src/components/static_repetitive_sprite.cpp
+        simple-2d/src/components/collision_body.cpp
         src/player.cpp
         src/ground.cpp
 )
