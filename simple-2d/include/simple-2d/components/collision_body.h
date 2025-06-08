@@ -13,6 +13,16 @@ namespace simple_2d {
             bool is_colliding = false;
             Direction direction;
         };
+
+        // There are 4 types of collisions, provided that there is no collision before
+        enum CollisionType {
+            Cb1BottomEdgeCollidingWithCb2TopEdge,
+            Cb1TopEdgeCollidingWithCb2BottomEdge,
+            Cb1LeftEdgeCollidingWithCb2RightEdge,
+            Cb1RightEdgeCollidingWithCb2LeftEdge,
+        };
+
+        typedef std::function<void(EntityId, EntityId, CollisionType)> OnCollisionCallback;
         CollisionBodyComponent(EntityId entityId);
         ~CollisionBodyComponent() = default;
         void SetEnabled(bool enabled);
@@ -23,8 +33,8 @@ namespace simple_2d {
         XYCoordinate<float> GetOffset() const;
         std::pair<Error, Rectangle<float>> GetCollisionBox() const;
         std::pair<Error, Rectangle<float>> GetCollisionBoxNextTick() const;
-        void SetOnCollisionCallback(std::function<void(EntityId, EntityId)> callback);
-        void NotifyCollision(EntityId otherEntityId);
+        void SetOnCollisionCallback(OnCollisionCallback callback);
+        void NotifyCollision(EntityId otherEntityId, CollisionType collisionType);
         Error Step() override;
     private:
         bool mIsEnabled = true;
@@ -32,7 +42,7 @@ namespace simple_2d {
         XYCoordinate<float> mOffset;
         CollisionResult mCollisionResult;
         // The callback will be called when 2 entities collide. First entity is always the entity that register callback
-        std::function<void(EntityId, EntityId)> mOnCollisionCallback;
+        OnCollisionCallback mOnCollisionCallback;
     };
 
     class CollisionBodyComponentManager : public ComponentManager {
