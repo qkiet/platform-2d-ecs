@@ -8,7 +8,8 @@
 #include <simple-2d/components/collision_body.h>
 
 #define MOVE_SPEED_PER_TICKS 3
-#define JUMP_INITIAL_SPEED 12
+#define JUMP_INITIAL_SPEED 10
+#define JUMP_INITIAL_SPEED_WHEN_HIT_ENEMY 8
 
 static void onKeyPressedEvent(simple_2d::EntityId entityId, const SDL_Event& event) {
     auto &engine = simple_2d::Engine::GetInstance();
@@ -122,7 +123,8 @@ simple_2d::Error Player::Init() {
             "isMovingLeft": false,
             "isMovingRight": false,
             "wantToJump": false,
-            "isJumping": false
+            "isJumping": false,
+            "type": "player"
         }
     )"));
     auto behaviorScript = std::static_pointer_cast<simple_2d::BehaviorScript>(GetComponent("behavior_script"));
@@ -133,17 +135,35 @@ simple_2d::Error Player::Init() {
     // @TODO: Very hard-cody. Will use another method to get size of sprite then apply to collision body
     collisionBody->SetSize(simple_2d::RectangularDimensions<float>(60, 112));
     collisionBody->SetEnabled(true);
-    collisionBody->SetOnCollisionCallback([](simple_2d::EntityId entityId1, simple_2d::EntityId entityId2) {
+    collisionBody->SetOnCollisionCallback([](simple_2d::EntityId entityId1, simple_2d::EntityId entityId2, simple_2d::CollisionBodyComponent::CollisionType collisionType) {
         BOOST_LOG_TRIVIAL(info) << "Player collide with entity " << entityId2;
         auto &engine = simple_2d::Engine::GetInstance();
         auto jsonComponent1 = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId1));
         auto jsonComponent2 = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId2));
+        if (jsonComponent2 == nullptr) {
+            // Collide with uninteresting entity, do nothing
+            return;
+        }
         auto jsonData1 = jsonComponent1->GetJson();
         auto jsonData2 = jsonComponent2->GetJson();
         if (jsonData2.contains("type") && jsonData2["type"] == "ground") {
             jsonData1["isJumping"] = false;
             jsonComponent1->SetJson(jsonData1);
             BOOST_LOG_TRIVIAL(info) << "Player is not jumping anymore";
+        } else if (jsonData2.contains("type") && jsonData2["type"] == "enemy") {
+            auto motionComponent1 = std::static_pointer_cast<simple_2d::MotionComponent>(engine.GetComponentManager("motion")->GetComponent(entityId1));
+            auto collisionBody1 = std::static_pointer_cast<simple_2d::CollisionBodyComponent>(engine.GetComponentManager("collision_body")->GetComponent(entityId1));
+            switch (collisionType) {
+                case simple_2d::CollisionBodyComponent::CollisionType::Cb1BottomEdgeCollidingWithCb2TopEdge:
+                    motionComponent1->SetVelocityOneAxis(simple_2d::Axis::Y, -JUMP_INITIAL_SPEED_WHEN_HIT_ENEMY);
+                    BOOST_LOG_TRIVIAL(info) << "Player is hit enemy";
+                    break;
+                default:
+                    motionComponent1->SetVelocityOneAxis(simple_2d::Axis::Y, -JUMP_INITIAL_SPEED_WHEN_HIT_ENEMY);
+                    collisionBody1->SetEnabled(false);
+                    BOOST_LOG_TRIVIAL(info) << "Oh no. Player hit at side of enemy. Lose the game";
+                    break;
+            }
         }
     });
     return simple_2d::Error::OK;

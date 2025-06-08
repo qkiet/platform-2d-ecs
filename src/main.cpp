@@ -15,6 +15,7 @@
 #include <SDL3/SDL_events.h>
 #include "player.h"
 #include "ground.h"
+#include "enemy.h"
 
 #define TICK_PER_SEC 60
 #define TICK_INTERVAL_MSEC 1000 / TICK_PER_SEC
@@ -39,6 +40,8 @@ int main(int argc, char *argv[]) {
     player.Init();
     Ground ground;
     ground.Init();
+    Enemy enemy1;
+    enemy1.Init();
     engine.GetCamera().SetPosition(simple_2d::XYCoordinate<float>(100, 100));
     while (true) {
 

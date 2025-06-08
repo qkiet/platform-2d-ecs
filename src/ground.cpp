@@ -33,15 +33,12 @@ simple_2d::Error Ground::Init() {
     auto groundBitmapBundle = engine.GetGraphics().LoadImageFromFile("assets/ground_tile.png");
     auto repetitiveSprite = std::static_pointer_cast<simple_2d::StaticRepetitiveSpriteComponent>(GetComponent("static_repetitive_sprite"));
     repetitiveSprite->SetUnitSurface(groundBitmapBundle.surface);
-    repetitiveSprite->SetDimensions(simple_2d::RectangularDimensions<int>(512, 128));
+    repetitiveSprite->SetDimensions(simple_2d::RectangularDimensions<int>(1024, 128));
     auto motion = std::static_pointer_cast<simple_2d::MotionComponent>(GetComponent("motion"));
     motion->SetPosition(simple_2d::XYCoordinate<float>(100, 400));
     auto collisionBody = std::static_pointer_cast<simple_2d::CollisionBodyComponent>(GetComponent("collision_body"));
-    collisionBody->SetSize(simple_2d::RectangularDimensions<float>(512, 128));
+    collisionBody->SetSize(simple_2d::RectangularDimensions<float>(1024, 128));
     collisionBody->SetEnabled(true);
-    collisionBody->SetOnCollisionCallback([](simple_2d::EntityId entityId1, simple_2d::EntityId entityId2) {
-        BOOST_LOG_TRIVIAL(info) << "Ground collide with entity " << entityId2;
-    });
     return simple_2d::Error::OK;
 }
 

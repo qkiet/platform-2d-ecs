@@ -29,6 +29,7 @@ set(SIMPLE_2D_SRCS
         simple-2d/src/components/collision_body.cpp
         src/player.cpp
         src/ground.cpp
+        src/enemy.cpp
 )
 
 add_executable(platform_2d
