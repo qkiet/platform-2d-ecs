@@ -200,11 +200,11 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                     BOOST_LOG_TRIVIAL(warning) << "Expected that 2 components are not colliding this tick, but they are";
                     // Currently, we don't know how to handle this case. So we just...let it stay overlapping.
                     // This is not a good solution, but it's the best we can do for now.
-                    // TODO: We need to figure out how to handle this case.
-                    continue;
                 }
                 auto [err3, collisionBoxNextTick1] = collisionBodyComponent1->GetCollisionBoxNextTick();
                 auto [err4, collisionBoxNextTick2] = collisionBodyComponent2->GetCollisionBoxNextTick();
+                BOOST_LOG_TRIVIAL(debug) << "Entity " << entityId1 << " collisionBoxNextTick1: " << collisionBoxNextTick1;
+                BOOST_LOG_TRIVIAL(debug) << "Entity " << entityId2 << " collisionBoxNextTick2: " << collisionBoxNextTick2;
                 if (Error::OK != err3 || Error::OK != err4) {
                     BOOST_LOG_TRIVIAL(error) << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
                     continue;
@@ -239,9 +239,12 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge);
                 BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge);
                 auto isCb1BottomEdgeAboveCb2TopEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge) == AxisAlignedEdgesRelativePosition::Above;
+                auto isCb1BottomEdgeAlignedWithCb2TopEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge) == AxisAlignedEdgesRelativePosition::Aligned;
                 auto isCb1BottomEdgeBelowCb2TopEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge) == AxisAlignedEdgesRelativePosition::Below;
                 auto isCb1BottomEdgeAlignedWithCb2TopEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge) == AxisAlignedEdgesRelativePosition::Aligned;
-                if (isCb1BottomEdgeAboveCb2TopEdgeThisTick && (isCb1BottomEdgeBelowCb2TopEdgeNextTick || isCb1BottomEdgeAlignedWithCb2TopEdgeNextTick)) {
+                auto isCb1BottomEdgeAboveCb2ThenCollide = isCb1BottomEdgeAboveCb2TopEdgeThisTick && (isCb1BottomEdgeBelowCb2TopEdgeNextTick || isCb1BottomEdgeAlignedWithCb2TopEdgeNextTick);
+                auto isCb1BottomEdgeAlignedWithCb2TopEdgeThenCollide = isCb1BottomEdgeAlignedWithCb2TopEdgeThisTick && (isCb1BottomEdgeBelowCb2TopEdgeNextTick ||isCb1BottomEdgeAlignedWithCb2TopEdgeNextTick);
+                if (isCb1BottomEdgeAboveCb2ThenCollide || isCb1BottomEdgeAlignedWithCb2TopEdgeThenCollide) {
                     possibleCb1BottomEdgeCollidingWithCb2TopEdge = true;
                 }
                 auto possibleCb1TopEdgeCollidingWithCb2BottomEdge = false;
@@ -252,9 +255,12 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge);
                 BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge);
                 auto isCb1TopEdgeBelowCb2BottomEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge) == AxisAlignedEdgesRelativePosition::Below;
+                auto isCb1TopEdgeAlignedWithCb2BottomEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge) == AxisAlignedEdgesRelativePosition::Aligned;
                 auto isCb1TopEdgeAboveCb2BottomEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge) == AxisAlignedEdgesRelativePosition::Above;
                 auto isCb1TopEdgeAlignedWithCb2BottomEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge) == AxisAlignedEdgesRelativePosition::Aligned;
-                if (isCb1TopEdgeBelowCb2BottomEdgeThisTick && (isCb1TopEdgeAboveCb2BottomEdgeNextTick || isCb1TopEdgeAlignedWithCb2BottomEdgeNextTick)) {
+                auto isCb1TopEdgeBelowCb2ThenCollide = isCb1TopEdgeBelowCb2BottomEdgeThisTick && (isCb1TopEdgeAboveCb2BottomEdgeNextTick || isCb1TopEdgeAlignedWithCb2BottomEdgeNextTick);
+                auto isCb1TopEdgeAlignedWithCb2BottomEdgeThenCollide = isCb1TopEdgeAlignedWithCb2BottomEdgeThisTick && (isCb1TopEdgeAboveCb2BottomEdgeNextTick || isCb1TopEdgeAlignedWithCb2BottomEdgeNextTick);
+                if (isCb1TopEdgeBelowCb2ThenCollide || isCb1TopEdgeAlignedWithCb2BottomEdgeThenCollide) {
                     possibleCb1TopEdgeCollidingWithCb2BottomEdge = true;
                 }
                 auto possibleCb1LeftEdgeCollidingWithCb2RightEdge = false;
@@ -265,9 +271,12 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge);
                 BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge);
                 auto isCb1LeftEdgeRightOfCb2LeftEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge) == AxisAlignedEdgesRelativePosition::RightOf;
+                auto isCb1LeftEdgeAlignedWithCb2RightEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge) == AxisAlignedEdgesRelativePosition::Aligned;
                 auto isCb1LeftEdgeLeftOfCb2RightEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge) == AxisAlignedEdgesRelativePosition::LeftOf;
                 auto isCb1LeftEdgeAlignedWithCb2RightEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge) == AxisAlignedEdgesRelativePosition::Aligned;
-                if (isCb1LeftEdgeRightOfCb2LeftEdgeThisTick && (isCb1LeftEdgeLeftOfCb2RightEdgeNextTick || isCb1LeftEdgeAlignedWithCb2RightEdgeNextTick)) {
+                auto isCb1LeftEdgeRightOfCb2ThenCollide = isCb1LeftEdgeRightOfCb2LeftEdgeThisTick && (isCb1LeftEdgeLeftOfCb2RightEdgeNextTick || isCb1LeftEdgeAlignedWithCb2RightEdgeNextTick);
+                auto isCb1LeftEdgeAlignedWithCb2RightEdgeThenCollide = isCb1LeftEdgeAlignedWithCb2RightEdgeThisTick && (isCb1LeftEdgeLeftOfCb2RightEdgeNextTick || isCb1LeftEdgeAlignedWithCb2RightEdgeNextTick);
+                if (isCb1LeftEdgeRightOfCb2ThenCollide || isCb1LeftEdgeAlignedWithCb2RightEdgeThenCollide) {
                     possibleCb1LeftEdgeCollidingWithCb2RightEdge = true;
                 }
                 auto possibleCb1RightEdgeCollidingWithCb2LeftEdge = false;
@@ -278,9 +287,12 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge);
                 BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge);
                 auto isCb1RightEdgeLeftOfCb2LeftEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge) == AxisAlignedEdgesRelativePosition::LeftOf;
+                auto isCb1RightEdgeAlignedWithCb2LeftEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge) == AxisAlignedEdgesRelativePosition::Aligned;
                 auto isCb1RightEdgeRightOfCb2LeftEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge) == AxisAlignedEdgesRelativePosition::RightOf;
                 auto isCb1RightEdgeAlignedWithCb2LeftEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge) == AxisAlignedEdgesRelativePosition::Aligned;
-                if (isCb1RightEdgeLeftOfCb2LeftEdgeThisTick && (isCb1RightEdgeRightOfCb2LeftEdgeNextTick || isCb1RightEdgeAlignedWithCb2LeftEdgeNextTick)) {
+                auto isCb1RightEdgeLeftOfCb2ThenCollide = isCb1RightEdgeLeftOfCb2LeftEdgeThisTick && (isCb1RightEdgeRightOfCb2LeftEdgeNextTick || isCb1RightEdgeAlignedWithCb2LeftEdgeNextTick);
+                auto isCb1RightEdgeAlignedWithCb2LeftEdgeThenCollide = isCb1RightEdgeAlignedWithCb2LeftEdgeThisTick && (isCb1RightEdgeRightOfCb2LeftEdgeNextTick || isCb1RightEdgeAlignedWithCb2LeftEdgeNextTick);
+                if (isCb1RightEdgeLeftOfCb2ThenCollide || isCb1RightEdgeAlignedWithCb2LeftEdgeThenCollide) {
                     possibleCb1RightEdgeCollidingWithCb2LeftEdge = true;
                 }
                 auto distanceCb1BottomEdgeToCb2TopEdgeNextTick = GetDistanceBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge);
@@ -362,13 +374,23 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                     auto isRightEdge2MovingRight = RelativePositionBetweenAxisAlignedEdges(rightEdge2ThisTick, rightEdge2NextTick) == AxisAlignedEdgesRelativePosition::LeftOf;
                     auto isRightEdge1MovingRight = RelativePositionBetweenAxisAlignedEdges(rightEdge1ThisTick, rightEdge1NextTick) == AxisAlignedEdgesRelativePosition::LeftOf;
                     auto isLeftEdge2MovingLeft = RelativePositionBetweenAxisAlignedEdges(leftEdge2ThisTick, leftEdge2NextTick) == AxisAlignedEdgesRelativePosition::RightOf;
+                    auto nextTickPositionY1 = motionComponent1->GetPositionNextTick().y;
+                    auto nextTickPositionY2 = motionComponent2->GetPositionNextTick().y;
+                    auto nextTickPositionX1 = motionComponent1->GetPositionNextTick().x;
+                    auto nextTickPositionX2 = motionComponent2->GetPositionNextTick().x;
+                    float newPositionY1 = 0;
+                    float newPositionY2 = 0;
+                    float newPositionX1 = 0;
+                    float newPositionX2 = 0;
                     // Resolve motions for 2 entities will be simple: we calculate the overlapped distance in the axis of the collision,
                     // and then we reallocate their positions based on ratio of velocities (acceleration added) in the axis of the collision.
                     switch (collisionType) {
                         case CollisionBodyComponent::CollisionType::Cb1BottomEdgeCollidingWithCb2TopEdge:
                             velocityRatioY = velocityNextTick1.y / (velocityNextTick1.y + velocityNextTick2.y);
-                            motionComponent1->SetPositionOneAxis(Axis::Y, motionComponent1->GetPositionOneAxis(Axis::Y) - distanceCb1BottomEdgeToCb2TopEdgeNextTick * velocityRatioY);
-                            motionComponent2->SetPositionOneAxis(Axis::Y, motionComponent2->GetPositionOneAxis(Axis::Y) + distanceCb1BottomEdgeToCb2TopEdgeNextTick * (1 - velocityRatioY));
+                            newPositionY1 = nextTickPositionY1 - distanceCb1BottomEdgeToCb2TopEdgeNextTick * velocityRatioY;
+                            newPositionY2 = nextTickPositionY2 + distanceCb1BottomEdgeToCb2TopEdgeNextTick * (1 - velocityRatioY);
+                            motionComponent1->SetPositionOneAxis(Axis::Y, newPositionY1);
+                            motionComponent2->SetPositionOneAxis(Axis::Y, newPositionY2);
                             if (isBottomEdge1MovingDown) {
                                 motionComponent1->SetVelocityOneAxis(Axis::Y, 0);
                                 motionComponent1->SetAccelerationOneAxis(Axis::Y, 0);
@@ -380,8 +402,10 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                             break;
                         case CollisionBodyComponent::CollisionType::Cb1TopEdgeCollidingWithCb2BottomEdge:
                             velocityRatioY = velocityNextTick1.y / (velocityNextTick1.y + velocityNextTick2.y);
-                            motionComponent1->SetPositionOneAxis(Axis::Y, motionComponent1->GetPositionOneAxis(Axis::Y) + distanceCb1TopEdgeToCb2BottomEdgeNextTick * velocityRatioY);
-                            motionComponent2->SetPositionOneAxis(Axis::Y, motionComponent2->GetPositionOneAxis(Axis::Y) - distanceCb1TopEdgeToCb2BottomEdgeNextTick * (1 - velocityRatioY));
+                            newPositionY1 = nextTickPositionY1 + distanceCb1TopEdgeToCb2BottomEdgeNextTick * velocityRatioY;
+                            newPositionY2 = nextTickPositionY2 - distanceCb1TopEdgeToCb2BottomEdgeNextTick * (1 - velocityRatioY);
+                            motionComponent1->SetPositionOneAxis(Axis::Y, newPositionY1);
+                            motionComponent2->SetPositionOneAxis(Axis::Y, newPositionY2);
                             if (isTopEdge1MovingUp) {
                                 motionComponent1->SetVelocityOneAxis(Axis::Y, 0);
                                 motionComponent1->SetAccelerationOneAxis(Axis::Y, 0);
@@ -393,8 +417,10 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                             break;
                         case CollisionBodyComponent::CollisionType::Cb1LeftEdgeCollidingWithCb2RightEdge:
                             velocityRatioX = velocityNextTick1.x / (velocityNextTick1.x + velocityNextTick2.x);
-                            motionComponent1->SetPositionOneAxis(Axis::X, motionComponent1->GetPositionOneAxis(Axis::X) + distanceCb1LeftEdgeToCb2RightEdgeNextTick * velocityRatioX);
-                            motionComponent2->SetPositionOneAxis(Axis::X, motionComponent2->GetPositionOneAxis(Axis::X) - distanceCb1LeftEdgeToCb2RightEdgeNextTick * (1 - velocityRatioX));
+                            newPositionX1 = nextTickPositionX1 + distanceCb1LeftEdgeToCb2RightEdgeNextTick * velocityRatioX;
+                            newPositionX2 = nextTickPositionX2 - distanceCb1LeftEdgeToCb2RightEdgeNextTick * (1 - velocityRatioX);
+                            motionComponent1->SetPositionOneAxis(Axis::X, newPositionX1);
+                            motionComponent2->SetPositionOneAxis(Axis::X, newPositionX2);
                             if (isLeftEdge1MovingLeft) {
                                 motionComponent1->SetVelocityOneAxis(Axis::X, 0);
                                 motionComponent1->SetAccelerationOneAxis(Axis::X, 0);
@@ -406,8 +432,10 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                             break;
                         case CollisionBodyComponent::CollisionType::Cb1RightEdgeCollidingWithCb2LeftEdge:
                             velocityRatioX = velocityNextTick1.x / (velocityNextTick1.x + velocityNextTick2.x);
-                            motionComponent1->SetPositionOneAxis(Axis::X, motionComponent1->GetPositionOneAxis(Axis::X) - distanceCb1RightEdgeToCb2LeftEdgeNextTick * velocityRatioX);
-                            motionComponent2->SetPositionOneAxis(Axis::X, motionComponent2->GetPositionOneAxis(Axis::X) + distanceCb1RightEdgeToCb2LeftEdgeNextTick * (1 - velocityRatioX));
+                            newPositionX1 = nextTickPositionX1 - distanceCb1RightEdgeToCb2LeftEdgeNextTick * velocityRatioX;
+                            newPositionX2 = nextTickPositionX2 + distanceCb1RightEdgeToCb2LeftEdgeNextTick * (1 - velocityRatioX);
+                            motionComponent1->SetPositionOneAxis(Axis::X, newPositionX1);
+                            motionComponent2->SetPositionOneAxis(Axis::X, newPositionX2);
                             if (isRightEdge1MovingRight) {
                                 motionComponent1->SetVelocityOneAxis(Axis::X, 0);
                                 motionComponent1->SetAccelerationOneAxis(Axis::X, 0);
