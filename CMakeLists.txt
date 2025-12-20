@@ -8,6 +8,7 @@ add_subdirectory(3rd-party/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(3rd-party/SDL_image EXCLUDE_FROM_ALL)
 add_subdirectory(3rd-party/SDL_mixer EXCLUDE_FROM_ALL)
 add_subdirectory(3rd-party/json EXCLUDE_FROM_ALL)
+include("cmake/boost-integration.cmake")
 
 set(SIMPLE_2D_SRCS
         simple-2d/src/core.cpp
@@ -41,8 +42,6 @@ add_executable(platform_2d
 target_include_directories(platform_2d PRIVATE simple-2d/include)
 
 target_link_libraries(platform_2d PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer boost_system boost_log nlohmann_json::nlohmann_json)
-
-target_compile_options(platform_2d PRIVATE -DBOOST_LOG_DYN_LINK)
 
 install(TARGETS platform_2d
 )

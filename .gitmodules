@@ -10,3 +10,6 @@
 [submodule "3rd-party/json"]
 	path = 3rd-party/json
 	url = git@github.com:nlohmann/json.git
+[submodule "3rd-party/boost"]
+	path = 3rd-party/boost
+	url = https://github.com/boostorg/boost.git
