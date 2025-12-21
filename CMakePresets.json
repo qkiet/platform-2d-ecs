@@ -1,0 +1,35 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "x86_64-linux-gcc",
+            "displayName": "Linux x64_64 native compile",
+            "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "SDL_SHARED": "OFF",
+                "SDL_STATIC": "ON",
+                "BUILD_SHARED_LIBS": "OFF",
+                "vendored_default": "ON" 
+            },
+            "toolchainFile": "cmake/toolchain-native-x64_linux_gcc.cmake"
+        },
+        {
+            "name": "x86_64-linux-mingw",
+            "displayName": "Linux x64_64 cross compile for Windows with MingW",
+            "description": "Using compilers: C = /usr/bin/x86_64-w64-mingw32-gcc, CXX = /usr/bin/x86_64-w64-mingw32-g++",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "SDL_SHARED": "OFF",
+                "SDL_STATIC": "ON",
+                "BUILD_SHARED_LIBS": "OFF",
+                "vendored_default": "ON" 
+            },
+            "toolchainFile": "cmake/toolchain-cross_compile-x64_linux_mingw.cmake"
+        }
+    ]
+}
