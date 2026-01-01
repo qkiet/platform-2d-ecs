@@ -1,13 +1,13 @@
 #include <simple-2d/components/motion.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 
 simple_2d::MotionComponent::MotionComponent(EntityId entityId): mPosition(0, 0), mVelocity(0, 0), mAcceleration(0, 0) {
-    BOOST_LOG_TRIVIAL(debug) << "MotionComponent constructor " << this;
+    SIMPLE_2D_LOG_DEBUG << "MotionComponent constructor " << this;
     mEntityId = entityId;
 }
 
 simple_2d::MotionComponent::~MotionComponent() {
-    BOOST_LOG_TRIVIAL(debug) << "MotionComponent destructor " << this;
+    SIMPLE_2D_LOG_DEBUG << "MotionComponent destructor " << this;
 }
 
 void simple_2d::MotionComponent::SetPosition(XYCoordinate<float> position) {
@@ -151,10 +151,10 @@ void simple_2d::MotionComponent::SetAccelerationOneAxis(Axis axis, float acceler
 }
 
 simple_2d::Error simple_2d::MotionComponent::Step() {
-    BOOST_LOG_TRIVIAL(debug) << "MotionComponent step for entity " << mEntityId;
+    SIMPLE_2D_LOG_DEBUG << "MotionComponent step for entity " << mEntityId;
     mVelocity += mAcceleration;
     mPosition += mVelocity;
-    BOOST_LOG_TRIVIAL(debug) << "entity " << mEntityId << " velocity: " << mVelocity << " acceleration: " << mAcceleration << " position: " << mPosition;
+    SIMPLE_2D_LOG_DEBUG << "entity " << mEntityId << " velocity: " << mVelocity << " acceleration: " << mAcceleration << " position: " << mPosition;
     return simple_2d::Error::OK;
 }
 

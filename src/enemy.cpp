@@ -1,6 +1,6 @@
 #include "enemy.h"
 #include <simple-2d/core.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 #include <simple-2d/components/animated_sprite.h>
 #include <simple-2d/components/motion.h>
 #include <simple-2d/components/behavior_script.h>
@@ -15,27 +15,27 @@ simple_2d::Error Enemy::Init() {
     auto &engine = simple_2d::Engine::GetInstance();
     auto error = AddComponent("animated_sprite");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add animated_sprite component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add animated_sprite component";
         return error;
     }
     error = AddComponent("motion");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add motion component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add motion component";
         return error;
     }
     error = AddComponent("downward_gravity");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add downward_gravity component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add downward_gravity component";
         return error;
     }
     error = AddComponent("json");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add json component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add json component";
         return error;
     }
     error = AddComponent("collision_body");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add collision_body component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add collision_body component";
         return error;
     }
     auto animatedSprite = std::static_pointer_cast<simple_2d::AnimatedSprite>(GetComponent("animated_sprite"));
@@ -60,14 +60,14 @@ simple_2d::Error Enemy::Init() {
     collisionBody->SetSize(simple_2d::RectangularDimensions<float>(60, 112));
     collisionBody->SetEnabled(true);
     collisionBody->SetOnCollisionCallback([](simple_2d::EntityId entityId1, simple_2d::EntityId entityId2, simple_2d::CollisionBodyComponent::CollisionType collisionType) {
-        BOOST_LOG_TRIVIAL(info) << "Enemy collide with entity " << entityId2;
+        SIMPLE_2D_LOG_INFO << "Enemy collide with entity " << entityId2;
         auto &engine = simple_2d::Engine::GetInstance();
         auto jsonComponent1 = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId1));
         auto jsonComponent2 = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId2));
         auto jsonData1 = jsonComponent1->GetJson();
         auto jsonData2 = jsonComponent2->GetJson();
         if (jsonData2.contains("type") && jsonData2["type"] == "player") {
-            BOOST_LOG_TRIVIAL(info) << "Enemy hit player";
+            SIMPLE_2D_LOG_INFO << "Enemy hit player";
             if (collisionType != simple_2d::CollisionBodyComponent::CollisionType::Cb1TopEdgeCollidingWithCb2BottomEdge) {
                 // simple this is the case that player will die
                 return;
@@ -76,7 +76,7 @@ simple_2d::Error Enemy::Init() {
             auto collisionBody1 = std::static_pointer_cast<simple_2d::CollisionBodyComponent>(engine.GetComponentManager("collision_body")->GetComponent(entityId1));
             collisionBody1->SetEnabled(false);
             motionComponent1->SetVelocityOneAxis(simple_2d::Axis::Y, -JUMP_INITIAL_SPEED_WHEN_PLAYER_HIT_HEAD);
-            BOOST_LOG_TRIVIAL(info) << "Enemy is dead";
+            SIMPLE_2D_LOG_INFO << "Enemy is dead";
         }
     });
     return simple_2d::Error::OK;

@@ -1,11 +1,8 @@
 #include <simple-2d/core.h>
-#include <boost/log/trivial.hpp>
 #include <simple-2d/entity.h>
+#include <simple-2d/utils.h>
 
 simple_2d::Engine::Engine() : mGraphics(), mAudio() {
-    // Well, this is so weird. Have to call this boost log or well it will throw error "Failed to set TLS value: Invalid argument"
-    // @todo: figure out why this is happening
-    BOOST_LOG_TRIVIAL(debug) << "Engine constructor " << this;
 }
 
 simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t window_width, size_t window_height, Color background_color) {
@@ -15,6 +12,7 @@ simple_2d::Error simple_2d::Engine::Init(const std::string window_title, size_t 
     if (mAudio.Init() != Error::OK) {
         return Error::INIT;
     }
+    SetupLog<0>(LogLevel::INFO);
     return Error::OK;
 }
 
@@ -22,7 +20,7 @@ void simple_2d::Engine::Deinit() {
     mGraphics.Deinit();
     mAudio.Deinit();
     SDL_Quit();
-    BOOST_LOG_TRIVIAL(info) << "Engine deinitialized successfully!";
+    SIMPLE_2D_LOG_INFO << "Engine deinitialized successfully!";
 }
 
 simple_2d::Error simple_2d::Engine::Step() {
@@ -46,7 +44,7 @@ simple_2d::Error simple_2d::Engine::pollEvents() {
     mEvents.clear();
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_EVENT_QUIT) {
-            BOOST_LOG_TRIVIAL(info) << "Receive quit";
+            SIMPLE_2D_LOG_INFO << "Receive quit";
             return Error::QUIT;
         }
         if (event.type != SDL_EVENT_POLL_SENTINEL) {
@@ -79,7 +77,7 @@ simple_2d::Error simple_2d::Engine::SetCurrentScene(std::shared_ptr<Scene> scene
     // The scene can be initialized outside of engine, but we need to make sure it is initialized here or
     // unexpected behavior may happen.
     if (Error::OK != mCurrentScene->Init()) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to set and initialize scene";
+        SIMPLE_2D_LOG_ERROR << "Failed to set and initialize scene";
         return Error::INIT;
     }
     return Error::OK;

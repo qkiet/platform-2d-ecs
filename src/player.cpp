@@ -1,6 +1,6 @@
 #include "player.h"
 #include <simple-2d/core.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 #include <simple-2d/components/animated_sprite.h>
 #include <simple-2d/components/motion.h>
 #include <simple-2d/components/behavior_script.h>
@@ -15,20 +15,20 @@ static void onKeyPressedEvent(simple_2d::EntityId entityId, const SDL_Event& eve
     auto &engine = simple_2d::Engine::GetInstance();
     auto json = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId));
     auto jsonData = json->GetJson();
-    BOOST_LOG_TRIVIAL(debug) << "Key pressed event";
+    SIMPLE_2D_LOG_DEBUG << "Key pressed event";
     if (event.key.scancode == SDL_SCANCODE_LEFT) {
         jsonData["isMovingLeft"] = true;
-        BOOST_LOG_TRIVIAL(debug) << "Left key pressed";
+        SIMPLE_2D_LOG_DEBUG << "Left key pressed";
     } else if (event.key.scancode == SDL_SCANCODE_RIGHT) {
         jsonData["isMovingRight"] = true;
-        BOOST_LOG_TRIVIAL(debug) << "Right key pressed";
+        SIMPLE_2D_LOG_DEBUG << "Right key pressed";
     }
     json->SetJson(jsonData);
 }
 
 static void onKeyReleasedEvent(simple_2d::EntityId entityId, const SDL_Event& event) {
     auto &engine = simple_2d::Engine::GetInstance();
-    BOOST_LOG_TRIVIAL(debug) << "Key released event";
+    SIMPLE_2D_LOG_DEBUG << "Key released event";
     auto json = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId));
     auto jsonData = json->GetJson();
     if (event.key.scancode == SDL_SCANCODE_SPACE) {
@@ -45,29 +45,29 @@ static void onTickEvent(simple_2d::EntityId entityId) {
     auto &engine = simple_2d::Engine::GetInstance();
     auto json = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId));
     auto jsonData = json->GetJson();
-    BOOST_LOG_TRIVIAL(debug) << "Tick event";
+    SIMPLE_2D_LOG_DEBUG << "Tick event";
     auto motionComponentManager = simple_2d::Engine::GetInstance().GetComponentManager("motion");
     if (motionComponentManager == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
         return;
     }
     auto component = motionComponentManager->GetComponent(entityId);
     if (component == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component for entity " << entityId;
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component for entity " << entityId;
         return;
     }
     auto motionComponent = std::static_pointer_cast<simple_2d::MotionComponent>(component);
-    auto isMovingRight = jsonData["isMovingRight"];
-    auto isMovingLeft = jsonData["isMovingLeft"];
-    auto wantToJump = jsonData["wantToJump"];
-    auto isJumping = jsonData["isJumping"];
+    bool isMovingRight = jsonData["isMovingRight"];
+    bool isMovingLeft = jsonData["isMovingLeft"];
+    bool wantToJump = jsonData["wantToJump"];
+    bool isJumping = jsonData["isJumping"];
     int direction = (int)isMovingRight - (int)isMovingLeft;
-    BOOST_LOG_TRIVIAL(debug) << "Direction: " << direction;
+    SIMPLE_2D_LOG_DEBUG << "Direction: " << direction;
     int aboutToJump = wantToJump && !isJumping;
-    BOOST_LOG_TRIVIAL(debug) << "IsJumping: " << isJumping;
+    SIMPLE_2D_LOG_DEBUG << "IsJumping: " << isJumping;
     motionComponent->SetVelocityOneAxis(simple_2d::Axis::X, direction * MOVE_SPEED_PER_TICKS);
     if (aboutToJump) {
-        BOOST_LOG_TRIVIAL(debug) << "Jump";
+        SIMPLE_2D_LOG_DEBUG << "Jump";
         motionComponent->SetVelocityOneAxis(simple_2d::Axis::Y, -JUMP_INITIAL_SPEED);
         jsonData["isJumping"] = true;
         jsonData["wantToJump"] = false;
@@ -79,32 +79,32 @@ simple_2d::Error Player::Init() {
     auto &engine = simple_2d::Engine::GetInstance();
     auto error = AddComponent("animated_sprite");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add animated_sprite component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add animated_sprite component";
         return error;
     }
     error = AddComponent("motion");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add motion component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add motion component";
         return error;
     }
     error = AddComponent("behavior_script");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add behavior_script component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add behavior_script component";
         return error;
     }
     error = AddComponent("downward_gravity");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add downward_gravity component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add downward_gravity component";
         return error;
     }
     error = AddComponent("json");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add json component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add json component";
         return error;
     }
     error = AddComponent("collision_body");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add collision_body component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add collision_body component";
         return error;
     }
     auto animatedSprite = std::static_pointer_cast<simple_2d::AnimatedSprite>(GetComponent("animated_sprite"));
@@ -136,7 +136,7 @@ simple_2d::Error Player::Init() {
     collisionBody->SetSize(simple_2d::RectangularDimensions<float>(60, 112));
     collisionBody->SetEnabled(true);
     collisionBody->SetOnCollisionCallback([](simple_2d::EntityId entityId1, simple_2d::EntityId entityId2, simple_2d::CollisionBodyComponent::CollisionType collisionType) {
-        BOOST_LOG_TRIVIAL(info) << "Player collide with entity " << entityId2;
+        SIMPLE_2D_LOG_INFO << "Player collide with entity " << entityId2;
         auto &engine = simple_2d::Engine::GetInstance();
         auto jsonComponent1 = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId1));
         auto jsonComponent2 = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager("json")->GetComponent(entityId2));
@@ -149,19 +149,19 @@ simple_2d::Error Player::Init() {
         if (jsonData2.contains("type") && jsonData2["type"] == "ground") {
             jsonData1["isJumping"] = false;
             jsonComponent1->SetJson(jsonData1);
-            BOOST_LOG_TRIVIAL(info) << "Player is not jumping anymore";
+            SIMPLE_2D_LOG_INFO << "Player is not jumping anymore";
         } else if (jsonData2.contains("type") && jsonData2["type"] == "enemy") {
             auto motionComponent1 = std::static_pointer_cast<simple_2d::MotionComponent>(engine.GetComponentManager("motion")->GetComponent(entityId1));
             auto collisionBody1 = std::static_pointer_cast<simple_2d::CollisionBodyComponent>(engine.GetComponentManager("collision_body")->GetComponent(entityId1));
             switch (collisionType) {
                 case simple_2d::CollisionBodyComponent::CollisionType::Cb1BottomEdgeCollidingWithCb2TopEdge:
                     motionComponent1->SetVelocityOneAxis(simple_2d::Axis::Y, -JUMP_INITIAL_SPEED_WHEN_HIT_ENEMY);
-                    BOOST_LOG_TRIVIAL(info) << "Player is hit enemy";
+                    SIMPLE_2D_LOG_INFO << "Player is hit enemy";
                     break;
                 default:
                     motionComponent1->SetVelocityOneAxis(simple_2d::Axis::Y, -JUMP_INITIAL_SPEED_WHEN_HIT_ENEMY);
                     collisionBody1->SetEnabled(false);
-                    BOOST_LOG_TRIVIAL(info) << "Oh no. Player hit at side of enemy. Lose the game";
+                    SIMPLE_2D_LOG_INFO << "Oh no. Player hit at side of enemy. Lose the game";
                     break;
             }
         }

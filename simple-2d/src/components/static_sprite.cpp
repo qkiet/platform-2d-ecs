@@ -1,19 +1,19 @@
 #include <simple-2d/components/static_sprite.h>
 #include <simple-2d/core.h>
 #include <simple-2d/components/motion.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 
 simple_2d::StaticSpriteComponent::StaticSpriteComponent(EntityId entityId) : mTexture(nullptr), mOffset(0, 0) {
-    BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
+    SIMPLE_2D_LOG_DEBUG << "StaticSpriteComponent constructor " << this;
     mEntityId = entityId;
 }
 simple_2d::StaticSpriteComponent::StaticSpriteComponent(EntityId entityId, ManagedTexture texture) : mTexture(texture), mOffset(0, 0) {
-    BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
+    SIMPLE_2D_LOG_DEBUG << "StaticSpriteComponent constructor " << this;
     mEntityId = 0;
 }
 simple_2d::StaticSpriteComponent::StaticSpriteComponent(EntityId entityId, ManagedTexture texture, XYCoordinate<float> position) :
         mTexture(texture), mOffset(position) {
-    BOOST_LOG_TRIVIAL(debug) << "StaticSpriteComponent constructor " << this;
+    SIMPLE_2D_LOG_DEBUG << "StaticSpriteComponent constructor " << this;
     mEntityId = entityId;
 }
 
@@ -33,12 +33,12 @@ simple_2d::XYCoordinate<float> simple_2d::StaticSpriteComponent::GetOffset() con
 simple_2d::Error simple_2d::StaticSpriteComponent::Step() {
     auto componentManager = simple_2d::Engine::GetInstance().GetComponentManager("motion");
     if (componentManager == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
         return Error::NOT_EXISTS;
     }
     auto component = componentManager->GetComponent(mEntityId);
     if (component == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component for entity " << mEntityId;
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component for entity " << mEntityId;
         return Error::NOT_EXISTS;
     }
     auto positionComponent = std::static_pointer_cast<MotionComponent>(component);

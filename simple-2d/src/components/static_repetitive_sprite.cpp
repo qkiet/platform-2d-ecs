@@ -3,11 +3,11 @@
 #include <simple-2d/components/motion.h>
 #include <simple-2d/graphics.h>
 #include <simple-2d/error_type.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 #include <SDL3/SDL.h>
 
 static auto textureDeleter = [](SDL_Texture *t) {
-    BOOST_LOG_TRIVIAL(debug) << "Destroy SDL_Texture " << t;
+    SIMPLE_2D_LOG_DEBUG << "Destroy SDL_Texture " << t;
     SDL_DestroyTexture(t);
 };
 
@@ -63,12 +63,12 @@ simple_2d::Error simple_2d::StaticRepetitiveSpriteComponent::Step() {
     }
     auto componentManager = simple_2d::Engine::GetInstance().GetComponentManager("motion");
     if (componentManager == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
         return Error::NOT_EXISTS;
     }
     auto component = componentManager->GetComponent(mEntityId);
     if (component == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component for entity " << mEntityId;
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component for entity " << mEntityId;
         return Error::NOT_EXISTS;
     }
     auto positionComponent = std::static_pointer_cast<MotionComponent>(component);

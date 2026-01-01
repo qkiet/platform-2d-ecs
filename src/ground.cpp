@@ -4,28 +4,28 @@
 #include <simple-2d/components/motion.h>
 #include <simple-2d/components/collision_body.h>
 #include <simple-2d/components/json.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 
 simple_2d::Error Ground::Init() {
     auto &engine = simple_2d::Engine::GetInstance();
     auto error = AddComponent("static_repetitive_sprite");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add static_repetitive_sprite component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add static_repetitive_sprite component";
         return error;
     }
     error = AddComponent("motion");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add motion component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add motion component";
         return error;
     }
     error = AddComponent("collision_body");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add collision_body component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add collision_body component";
         return error;
     }
     error = AddComponent("json");
     if (error != simple_2d::Error::OK) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to add json component";
+        SIMPLE_2D_LOG_ERROR << "Failed to add json component";
         return error;
     }
     auto jsonComponent = std::static_pointer_cast<simple_2d::JsonComponent>(GetComponent("json"));

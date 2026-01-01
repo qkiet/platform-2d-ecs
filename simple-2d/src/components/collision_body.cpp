@@ -1,7 +1,7 @@
 #include <simple-2d/components/collision_body.h>
 #include <simple-2d/core.h>
 #include <simple-2d/components/motion.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 #include <simple-2d/components/config.h>
 #include <cmath>
 #include <array>
@@ -38,12 +38,12 @@ simple_2d::XYCoordinate<float> simple_2d::CollisionBodyComponent::GetOffset() co
 std::pair<simple_2d::Error, simple_2d::Rectangle<float>> simple_2d::CollisionBodyComponent::GetCollisionBox() const {
     auto motionComponentManager = Engine::GetInstance().GetComponentManager("motion");
     if (motionComponentManager == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
         return {Error::NOT_EXISTS, Rectangle<float>()};
     }
     auto motionComponent = std::static_pointer_cast<MotionComponent>(motionComponentManager->GetComponent(GetEntityId()));
     if (motionComponent == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component";
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component";
         return {Error::NOT_EXISTS, Rectangle<float>()};
     }
     auto collisionBoxTopLeft = motionComponent->GetPosition() + mOffset;
@@ -55,12 +55,12 @@ std::pair<simple_2d::Error, simple_2d::Rectangle<float>> simple_2d::CollisionBod
 std::pair<simple_2d::Error, simple_2d::Rectangle<float>> simple_2d::CollisionBodyComponent::GetCollisionBoxNextTick() const {
     auto motionComponentManager = Engine::GetInstance().GetComponentManager("motion");
     if (motionComponentManager == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
         return {Error::NOT_EXISTS, Rectangle<float>()};
     }
     auto motionComponent = std::static_pointer_cast<MotionComponent>(motionComponentManager->GetComponent(GetEntityId()));
     if (motionComponent == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component";
+        SIMPLE_2D_LOG_ERROR << "Failed to get motion component";
         return {Error::NOT_EXISTS, Rectangle<float>()};
     }
     auto collisionBoxTopLeft = motionComponent->GetPositionNextTick() + mOffset;
@@ -109,17 +109,17 @@ void simple_2d::CollisionBodyComponentManager::Step() {
     for (auto &component : mComponents) {
         auto collisionBodyComponent = std::static_pointer_cast<CollisionBodyComponent>(component.second);
         if (!collisionBodyComponent->IsEnabled()) {
-            BOOST_LOG_TRIVIAL(debug) << "Collision body component is not enabled for entity " << collisionBodyComponent->GetEntityId();
+            SIMPLE_2D_LOG_DEBUG << "Collision body component is not enabled for entity " << collisionBodyComponent->GetEntityId();
             continue;
         }
         auto motionComponentManager = Engine::GetInstance().GetComponentManager("motion");
         if (motionComponentManager == nullptr) {
-            BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+            SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
             continue;
         }
         auto motionComponent = std::static_pointer_cast<MotionComponent>(motionComponentManager->GetComponent(collisionBodyComponent->GetEntityId()));
         if (motionComponent == nullptr) {
-            BOOST_LOG_TRIVIAL(error) << "Failed to get motion component for entity " << collisionBodyComponent->GetEntityId();
+            SIMPLE_2D_LOG_ERROR << "Failed to get motion component for entity " << collisionBodyComponent->GetEntityId();
             continue;
         }
         auto actualCollisionComponentOrigin = motionComponent->GetPosition() + collisionBodyComponent->GetOffset();
@@ -168,18 +168,18 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 auto entityId1 = *it;
                 auto entityId2 = *it2;
                 if (entityCollisionsMap[entityId1].find(entityId2) != entityCollisionsMap[entityId1].end() || entityCollisionsMap[entityId2].find(entityId1) != entityCollisionsMap[entityId2].end()) {
-                    BOOST_LOG_TRIVIAL(debug) << "Entities " << entityId1 << " and " << entityId2 << " are already collided! Skipping...";
+                    SIMPLE_2D_LOG_DEBUG << "Entities " << entityId1 << " and " << entityId2 << " are already collided! Skipping...";
                     continue;
                 }
-                BOOST_LOG_TRIVIAL(debug) << "Checking collision between entities " << entityId1 << " and " << entityId2 << " in cell " << cellId;
+                SIMPLE_2D_LOG_DEBUG << "Checking collision between entities " << entityId1 << " and " << entityId2 << " in cell " << cellId;
                 auto collisionBodyComponent1 = std::static_pointer_cast<CollisionBodyComponent>(GetComponent(entityId1));
                 if (nullptr == collisionBodyComponent1) {
-                    BOOST_LOG_TRIVIAL(error) << "Failed to get collision body component for entity " << entityId1;
+                    SIMPLE_2D_LOG_ERROR << "Failed to get collision body component for entity " << entityId1;
                     continue;
                 }
                 auto collisionBodyComponent2 = std::static_pointer_cast<CollisionBodyComponent>(GetComponent(entityId2));
                 if (nullptr == collisionBodyComponent2) {
-                    BOOST_LOG_TRIVIAL(error) << "Failed to get collision body component for entity " << entityId2;
+                    SIMPLE_2D_LOG_ERROR << "Failed to get collision body component for entity " << entityId2;
                     continue;
                 }
                 // The algorithm is simple:
@@ -193,26 +193,26 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 auto [err1, collisionBoxThisTick1] = collisionBodyComponent1->GetCollisionBox();
                 auto [err2, collisionBoxThisTick2] = collisionBodyComponent2->GetCollisionBox();
                 if (Error::OK != err1 || Error::OK != err2) {
-                    BOOST_LOG_TRIVIAL(error) << "Failed to get collision box for entity " << entityId1 << " or " << entityId2;
+                    SIMPLE_2D_LOG_ERROR << "Failed to get collision box for entity " << entityId1 << " or " << entityId2;
                     continue;
                 }
                 if (AreRectanglesOverlap(collisionBoxThisTick1, collisionBoxThisTick2)) {
-                    BOOST_LOG_TRIVIAL(warning) << "Expected that 2 components are not colliding this tick, but they are";
+                    SIMPLE_2D_LOG_WARNING << "Expected that 2 components are not colliding this tick, but they are";
                     // Currently, we don't know how to handle this case. So we just...let it stay overlapping.
                     // This is not a good solution, but it's the best we can do for now.
                 }
                 auto [err3, collisionBoxNextTick1] = collisionBodyComponent1->GetCollisionBoxNextTick();
                 auto [err4, collisionBoxNextTick2] = collisionBodyComponent2->GetCollisionBoxNextTick();
-                BOOST_LOG_TRIVIAL(debug) << "Entity " << entityId1 << " collisionBoxNextTick1: " << collisionBoxNextTick1;
-                BOOST_LOG_TRIVIAL(debug) << "Entity " << entityId2 << " collisionBoxNextTick2: " << collisionBoxNextTick2;
+                SIMPLE_2D_LOG_DEBUG << "Entity " << entityId1 << " collisionBoxNextTick1: " << collisionBoxNextTick1;
+                SIMPLE_2D_LOG_DEBUG << "Entity " << entityId2 << " collisionBoxNextTick2: " << collisionBoxNextTick2;
                 if (Error::OK != err3 || Error::OK != err4) {
-                    BOOST_LOG_TRIVIAL(error) << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
+                    SIMPLE_2D_LOG_ERROR << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
                     continue;
                 }
                 if (!AreRectanglesOverlap(collisionBoxNextTick1, collisionBoxNextTick2)) {
                     continue;
                 }
-                BOOST_LOG_TRIVIAL(debug) << "entity " << entityId1 << " and " << entityId2 << " are colliding";
+                SIMPLE_2D_LOG_DEBUG << "entity " << entityId1 << " and " << entityId2 << " are colliding";
                 auto cbThisTick1TopEdge = collisionBoxThisTick1.GetAxisAlignedEdge<float>(RectangleEdge::Top);
                 auto cbThisTick1BottomEdge = collisionBoxThisTick1.GetAxisAlignedEdge<float>(RectangleEdge::Bottom);
                 auto cbThisTick1LeftEdge = collisionBoxThisTick1.GetAxisAlignedEdge<float>(RectangleEdge::Left);
@@ -232,12 +232,12 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 // Magic happens here.
                 // Check whether the bottom edge of cb1 is colliding with the top edge of cb2
                 auto possibleCb1BottomEdgeCollidingWithCb2TopEdge = false;
-                BOOST_LOG_TRIVIAL(debug) << "cbThisTick1BottomEdge: " << cbThisTick1BottomEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbThisTick2TopEdge: " << cbThisTick2TopEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbNextTick1BottomEdge: " << cbNextTick1BottomEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbNextTick2TopEdge: " << cbNextTick2TopEdge;
-                BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge);
-                BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge);
+                SIMPLE_2D_LOG_DEBUG << "cbThisTick1BottomEdge: " << cbThisTick1BottomEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbThisTick2TopEdge: " << cbThisTick2TopEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbNextTick1BottomEdge: " << cbNextTick1BottomEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbNextTick2TopEdge: " << cbNextTick2TopEdge;
+                SIMPLE_2D_LOG_DEBUG << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge);
+                SIMPLE_2D_LOG_DEBUG << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge);
                 auto isCb1BottomEdgeAboveCb2TopEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge) == AxisAlignedEdgesRelativePosition::Above;
                 auto isCb1BottomEdgeAlignedWithCb2TopEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1BottomEdge, cbThisTick2TopEdge) == AxisAlignedEdgesRelativePosition::Aligned;
                 auto isCb1BottomEdgeBelowCb2TopEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1BottomEdge, cbNextTick2TopEdge) == AxisAlignedEdgesRelativePosition::Below;
@@ -248,12 +248,12 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                     possibleCb1BottomEdgeCollidingWithCb2TopEdge = true;
                 }
                 auto possibleCb1TopEdgeCollidingWithCb2BottomEdge = false;
-                BOOST_LOG_TRIVIAL(debug) << "cbThisTick1TopEdge: " << cbThisTick1TopEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbThisTick2BottomEdge: " << cbThisTick2BottomEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbNextTick1TopEdge: " << cbNextTick1TopEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbNextTick2BottomEdge: " << cbNextTick2BottomEdge;
-                BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge);
-                BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge);
+                SIMPLE_2D_LOG_DEBUG << "cbThisTick1TopEdge: " << cbThisTick1TopEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbThisTick2BottomEdge: " << cbThisTick2BottomEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbNextTick1TopEdge: " << cbNextTick1TopEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbNextTick2BottomEdge: " << cbNextTick2BottomEdge;
+                SIMPLE_2D_LOG_DEBUG << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge);
+                SIMPLE_2D_LOG_DEBUG << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge);
                 auto isCb1TopEdgeBelowCb2BottomEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge) == AxisAlignedEdgesRelativePosition::Below;
                 auto isCb1TopEdgeAlignedWithCb2BottomEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1TopEdge, cbThisTick2BottomEdge) == AxisAlignedEdgesRelativePosition::Aligned;
                 auto isCb1TopEdgeAboveCb2BottomEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge) == AxisAlignedEdgesRelativePosition::Above;
@@ -264,12 +264,12 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                     possibleCb1TopEdgeCollidingWithCb2BottomEdge = true;
                 }
                 auto possibleCb1LeftEdgeCollidingWithCb2RightEdge = false;
-                BOOST_LOG_TRIVIAL(debug) << "cbThisTick1LeftEdge: " << cbThisTick1LeftEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbThisTick2RightEdge: " << cbThisTick2RightEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbNextTick1LeftEdge: " << cbNextTick1LeftEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbNextTick2RightEdge: " << cbNextTick2RightEdge;
-                BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge);
-                BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge);
+                SIMPLE_2D_LOG_DEBUG << "cbThisTick1LeftEdge: " << cbThisTick1LeftEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbThisTick2RightEdge: " << cbThisTick2RightEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbNextTick1LeftEdge: " << cbNextTick1LeftEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbNextTick2RightEdge: " << cbNextTick2RightEdge;
+                SIMPLE_2D_LOG_DEBUG << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge);
+                SIMPLE_2D_LOG_DEBUG << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge);
                 auto isCb1LeftEdgeRightOfCb2LeftEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge) == AxisAlignedEdgesRelativePosition::RightOf;
                 auto isCb1LeftEdgeAlignedWithCb2RightEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1LeftEdge, cbThisTick2RightEdge) == AxisAlignedEdgesRelativePosition::Aligned;
                 auto isCb1LeftEdgeLeftOfCb2RightEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1LeftEdge, cbNextTick2RightEdge) == AxisAlignedEdgesRelativePosition::LeftOf;
@@ -280,12 +280,12 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                     possibleCb1LeftEdgeCollidingWithCb2RightEdge = true;
                 }
                 auto possibleCb1RightEdgeCollidingWithCb2LeftEdge = false;
-                BOOST_LOG_TRIVIAL(debug) << "cbThisTick1RightEdge: " << cbThisTick1RightEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbThisTick2LeftEdge: " << cbThisTick2LeftEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbNextTick1RightEdge: " << cbNextTick1RightEdge;
-                BOOST_LOG_TRIVIAL(debug) << "cbNextTick2LeftEdge: " << cbNextTick2LeftEdge;
-                BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge);
-                BOOST_LOG_TRIVIAL(debug) << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge);
+                SIMPLE_2D_LOG_DEBUG << "cbThisTick1RightEdge: " << cbThisTick1RightEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbThisTick2LeftEdge: " << cbThisTick2LeftEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbNextTick1RightEdge: " << cbNextTick1RightEdge;
+                SIMPLE_2D_LOG_DEBUG << "cbNextTick2LeftEdge: " << cbNextTick2LeftEdge;
+                SIMPLE_2D_LOG_DEBUG << "RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge): " << RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge);
+                SIMPLE_2D_LOG_DEBUG << "RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge): " << RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge);
                 auto isCb1RightEdgeLeftOfCb2LeftEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge) == AxisAlignedEdgesRelativePosition::LeftOf;
                 auto isCb1RightEdgeAlignedWithCb2LeftEdgeThisTick = RelativePositionBetweenAxisAlignedEdges(cbThisTick1RightEdge, cbThisTick2LeftEdge) == AxisAlignedEdgesRelativePosition::Aligned;
                 auto isCb1RightEdgeRightOfCb2LeftEdgeNextTick = RelativePositionBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge) == AxisAlignedEdgesRelativePosition::RightOf;
@@ -300,50 +300,50 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 auto distanceCb1RightEdgeToCb2LeftEdgeNextTick = GetDistanceBetweenAxisAlignedEdges(cbNextTick1RightEdge, cbNextTick2LeftEdge);
                 auto distanceCb1TopEdgeToCb2BottomEdgeNextTick = GetDistanceBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge);
                 auto interpolateMotionForCollidingEntities = [this, distanceCb1BottomEdgeToCb2TopEdgeNextTick, distanceCb1LeftEdgeToCb2RightEdgeNextTick, distanceCb1RightEdgeToCb2LeftEdgeNextTick, distanceCb1TopEdgeToCb2BottomEdgeNextTick](EntityId entityId1, EntityId entityId2, simple_2d::CollisionBodyComponent::CollisionType collisionType) {
-                    BOOST_LOG_TRIVIAL(debug) << "Interpolating motion for entities " << entityId1 << " and " << entityId2 << " with collision type " << collisionType;
+                    SIMPLE_2D_LOG_DEBUG << "Interpolating motion for entities " << entityId1 << " and " << entityId2 << " with collision type " << collisionType;
                     auto motionComponentManager = Engine::GetInstance().GetComponentManager("motion");
                     if (motionComponentManager == nullptr) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component manager";
+                        SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
                         return;
                     }
                     auto motionComponent1 = std::static_pointer_cast<MotionComponent>(motionComponentManager->GetComponent(entityId1));
                     if (motionComponent1 == nullptr) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component for entity " << entityId1;
+                        SIMPLE_2D_LOG_ERROR << "Failed to get motion component for entity " << entityId1;
                         return;
                     }
                     auto motionComponent2 = std::static_pointer_cast<MotionComponent>(motionComponentManager->GetComponent(entityId2));
                     if (motionComponent2 == nullptr) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get motion component for entity " << entityId2;
+                        SIMPLE_2D_LOG_ERROR << "Failed to get motion component for entity " << entityId2;
                         return;
                     }
                     auto collisionBodyComponent1 = std::static_pointer_cast<CollisionBodyComponent>(GetComponent(entityId1));
                     if (collisionBodyComponent1 == nullptr) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get collision body component for entity " << entityId1;
+                        SIMPLE_2D_LOG_ERROR << "Failed to get collision body component for entity " << entityId1;
                         return;
                     }
                     auto collisionBodyComponent2 = std::static_pointer_cast<CollisionBodyComponent>(GetComponent(entityId2));
                     if (collisionBodyComponent2 == nullptr) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get collision body component for entity " << entityId2;
+                        SIMPLE_2D_LOG_ERROR << "Failed to get collision body component for entity " << entityId2;
                         return;
                     }
                     auto [err1, collisionBoxThisTick1] = collisionBodyComponent1->GetCollisionBox();
                     if (Error::OK != err1) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
+                        SIMPLE_2D_LOG_ERROR << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
                         return;
                     }
                     auto [err2, collisionBoxThisTick2] = collisionBodyComponent2->GetCollisionBox();
                     if (Error::OK != err2) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
+                        SIMPLE_2D_LOG_ERROR << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
                         return;
                     }
                     auto [err3, collisionBoxNextTick1] = collisionBodyComponent1->GetCollisionBoxNextTick();
                     if (Error::OK != err1) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
+                        SIMPLE_2D_LOG_ERROR << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
                         return;
                     }
                     auto [err4, collisionBoxNextTick2] = collisionBodyComponent2->GetCollisionBoxNextTick();
                     if (Error::OK != err2) {
-                        BOOST_LOG_TRIVIAL(error) << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
+                        SIMPLE_2D_LOG_ERROR << "Failed to get collision box next tick for entity " << entityId1 << " or " << entityId2;
                         return;
                     }
                     auto topEdge1ThisTick = collisionBoxThisTick1.GetAxisAlignedEdge<float>(RectangleEdge::Top);
@@ -447,10 +447,10 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                             break;
                     }
                 };
-                BOOST_LOG_TRIVIAL(debug) << "Possible cb1 bottom edge colliding with cb2 top edge: " << possibleCb1BottomEdgeCollidingWithCb2TopEdge;
-                BOOST_LOG_TRIVIAL(debug) << "Possible cb1 top edge colliding with cb2 bottom edge: " << possibleCb1TopEdgeCollidingWithCb2BottomEdge;
-                BOOST_LOG_TRIVIAL(debug) << "Possible cb1 left edge colliding with cb2 right edge: " << possibleCb1LeftEdgeCollidingWithCb2RightEdge;
-                BOOST_LOG_TRIVIAL(debug) << "Possible cb1 right edge colliding with cb2 left edge: " << possibleCb1RightEdgeCollidingWithCb2LeftEdge;
+                SIMPLE_2D_LOG_DEBUG << "Possible cb1 bottom edge colliding with cb2 top edge: " << possibleCb1BottomEdgeCollidingWithCb2TopEdge;
+                SIMPLE_2D_LOG_DEBUG << "Possible cb1 top edge colliding with cb2 bottom edge: " << possibleCb1TopEdgeCollidingWithCb2BottomEdge;
+                SIMPLE_2D_LOG_DEBUG << "Possible cb1 left edge colliding with cb2 right edge: " << possibleCb1LeftEdgeCollidingWithCb2RightEdge;
+                SIMPLE_2D_LOG_DEBUG << "Possible cb1 right edge colliding with cb2 left edge: " << possibleCb1RightEdgeCollidingWithCb2LeftEdge;
                 auto collisionTypeForEntity1 = CollisionBodyComponent::CollisionType::Cb1BottomEdgeCollidingWithCb2TopEdge;
                 auto collisionTypeForEntity2 = CollisionBodyComponent::CollisionType::Cb1BottomEdgeCollidingWithCb2TopEdge;
                 if (possibleCb1BottomEdgeCollidingWithCb2TopEdge && possibleCb1LeftEdgeCollidingWithCb2RightEdge) {

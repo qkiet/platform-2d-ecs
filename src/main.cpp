@@ -1,5 +1,4 @@
-#include <boost/log/trivial.hpp>
-#include <boost/log/expressions.hpp>
+#include <simple-2d/utils.h>
 #include <chrono>
 #include <thread>
 #include <vector>
@@ -29,8 +28,6 @@ static uint32_t get_remaining_ticks(const std::chrono::system_clock::time_point 
 
 
 int main(int argc, char *argv[]) {
-    boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::debug);
-
     auto &engine = simple_2d::Engine::GetInstance();
     engine.Init("Flappy Bird", 800, 600, simple_2d::Color{255, 255, 255, 255});
     auto lastTickTimestamp = std::chrono::high_resolution_clock::now();

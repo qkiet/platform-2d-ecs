@@ -1,5 +1,5 @@
 #include <simple-2d/scene.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 #include <simple-2d/components/behavior_script.h>
 #include <simple-2d/components/downward_gravity.h>
 #include <simple-2d/components/static_sprite.h>
@@ -35,27 +35,27 @@ simple_2d::Error simple_2d::Scene::Init() {
 std::shared_ptr<simple_2d::ComponentManager> simple_2d::Scene::GetComponentManager(const std::string& component_name) const {
     auto it = mComponentManagers.find(component_name);
     if (it == mComponentManagers.end()) {
-        BOOST_LOG_TRIVIAL(error) << "Component manager not found: " << component_name;
+        SIMPLE_2D_LOG_ERROR << "Component manager not found: " << component_name;
         return nullptr;
     }
     return it->second;
 }
 
 simple_2d::Error simple_2d::Scene::Step() {
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager behavior_script";
+    SIMPLE_2D_LOG_DEBUG << "Stepping component manager behavior_script";
     mComponentManagers["behavior_script"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager downward_gravity";
+    SIMPLE_2D_LOG_DEBUG << "Stepping component manager downward_gravity";
     mComponentManagers["downward_gravity"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_sprite";
+    SIMPLE_2D_LOG_DEBUG << "Stepping component manager static_sprite";
     mComponentManagers["static_sprite"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager collision_body";
+    SIMPLE_2D_LOG_DEBUG << "Stepping component manager collision_body";
     mComponentManagers["collision_body"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager motion";
+    SIMPLE_2D_LOG_DEBUG << "Stepping component manager motion";
     mComponentManagers["motion"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager animated_sprite";
+    SIMPLE_2D_LOG_DEBUG << "Stepping component manager animated_sprite";
     mComponentManagers["animated_sprite"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component manager static_repetitive_sprite";
+    SIMPLE_2D_LOG_DEBUG << "Stepping component manager static_repetitive_sprite";
     mComponentManagers["static_repetitive_sprite"]->Step();
-    BOOST_LOG_TRIVIAL(debug) << "Stepping component managers done";
+    SIMPLE_2D_LOG_DEBUG << "Stepping component managers done";
     return Error::OK;
 }

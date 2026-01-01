@@ -1,5 +1,5 @@
 #include <simple-2d/component.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 #include <simple-2d/components/animated_sprite.h>
 #include <simple-2d/components/motion.h>
 #include <simple-2d/components/downward_gravity.h>
@@ -10,11 +10,11 @@
 #include <simple-2d/components/collision_body.h>
 
 simple_2d::ComponentManager::ComponentManager() {
-    BOOST_LOG_TRIVIAL(debug) << "ComponentManager constructor " << this;
+    SIMPLE_2D_LOG_DEBUG << "ComponentManager constructor " << this;
 }
 
 simple_2d::ComponentManager::~ComponentManager() {
-    BOOST_LOG_TRIVIAL(debug) << "ComponentManager destructor " << this;
+    SIMPLE_2D_LOG_DEBUG << "ComponentManager destructor " << this;
 }
 
 std::shared_ptr<simple_2d::Component> simple_2d::Component::CreateComponent(std::string componentName, EntityId entityId) {
@@ -42,13 +42,13 @@ std::shared_ptr<simple_2d::Component> simple_2d::Component::CreateComponent(std:
     if (componentName == "collision_body") {
         return std::make_shared<simple_2d::CollisionBodyComponent>(entityId);
     }
-    BOOST_LOG_TRIVIAL(error) << "Failed to create component " << componentName;
+    SIMPLE_2D_LOG_ERROR << "Failed to create component " << componentName;
     return nullptr;
 }
 
 void simple_2d::Component::SetEntityId(EntityId id) {
     if (mIsEntityIdSet) {
-        BOOST_LOG_TRIVIAL(error) << "Entity ID is already set";
+        SIMPLE_2D_LOG_ERROR << "Entity ID is already set";
         return;
     }
     mEntityId = id;
@@ -66,7 +66,7 @@ void simple_2d::ComponentManager::RegisterNewEntity(simple_2d::EntityId id, std:
 std::shared_ptr<simple_2d::Component> simple_2d::ComponentManager::GetComponent(EntityId id) const {
     auto it = mComponents.find(id);
     if (it == mComponents.end()) {
-        BOOST_LOG_TRIVIAL(error) << "Component not found for entity " << id;
+        SIMPLE_2D_LOG_ERROR << "Component not found for entity " << id;
         return nullptr;
     }
     return it->second;

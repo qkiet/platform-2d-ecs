@@ -1,14 +1,16 @@
 #include <simple-2d/audio.h>
-#include <boost/log/trivial.hpp>
+#include <simple-2d/utils.h>
 #include "internal_utils.h"
+#include <climits>
+
 #define TARGET_AUDIO_DEVICE SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK
 
 static auto soundDeleter = [](Mix_Chunk *c) {
-    BOOST_LOG_TRIVIAL(debug) << "Destroy sound " << c;
+    SIMPLE_2D_LOG_DEBUG << "Destroy sound " << c;
     Mix_FreeChunk(c);
 };
 static auto musicDeleter = [](Mix_Music *m) {
-    BOOST_LOG_TRIVIAL(debug) << "Destroy music " << m;
+    SIMPLE_2D_LOG_DEBUG << "Destroy music " << m;
     Mix_FreeMusic(m);
 };
 
@@ -42,7 +44,7 @@ static std::string audioFormatString(SDL_AudioFormat format) {
 }
 
 simple_2d::Error simple_2d::AudioSubsystem::Init() {
-    BOOST_LOG_TRIVIAL(info) << "Initializing audio subsystem...";
+    SIMPLE_2D_LOG_INFO << "Initializing audio subsystem...";
     SDL_Init(SDL_INIT_AUDIO);
     // @todo: support changing audio device and different audio device spec
     SDL_AudioSpec spec = {
@@ -51,34 +53,34 @@ simple_2d::Error simple_2d::AudioSubsystem::Init() {
         .freq = MIX_DEFAULT_FREQUENCY,
     };
     if (!Mix_OpenAudio(TARGET_AUDIO_DEVICE, &spec)) {
-        BOOST_LOG_TRIVIAL(error) << "Got error \"" << SDL_GetError() << "\" when try to open audio device id " << TARGET_AUDIO_DEVICE;
+        SIMPLE_2D_LOG_ERROR << "Got error \"" << SDL_GetError() << "\" when try to open audio device id " << TARGET_AUDIO_DEVICE;
         return Error::INIT;
     }
     SDL_AudioSpec actual_spec;
     if (!getAudioSpec(actual_spec)) {
-        BOOST_LOG_TRIVIAL(error) << "Got unexpected error when try to query opended audio device id" << TARGET_AUDIO_DEVICE;
+        SIMPLE_2D_LOG_ERROR << "Got unexpected error when try to query opended audio device id" << TARGET_AUDIO_DEVICE;
         return Error::INIT;
     }
     auto audio_format = (actual_spec.channels > 2) ? "surround" : (actual_spec.channels > 1) ? "stereo" : "mono";
-    BOOST_LOG_TRIVIAL(info) << "Open audio device at "  << actual_spec.freq << "Hz "
+    SIMPLE_2D_LOG_INFO << "Open audio device at "  << actual_spec.freq << "Hz "
                                                         << audioFormatString(actual_spec.format)
                                                         << " " << audio_format;
-    BOOST_LOG_TRIVIAL(info) << "Audio subsystem initialized successfully!";
+    SIMPLE_2D_LOG_INFO << "Audio subsystem initialized successfully!";
     return Error::OK;
 }
 
 void simple_2d::AudioSubsystem::Deinit() {
-    BOOST_LOG_TRIVIAL(info) << "Closing audio subsystem...";
+    SIMPLE_2D_LOG_INFO << "Closing audio subsystem...";
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
-    BOOST_LOG_TRIVIAL(info) << "Audio subsystem closed successfully!";
+    SIMPLE_2D_LOG_INFO << "Audio subsystem closed successfully!";
 }
 
 simple_2d::ManagedSound simple_2d::AudioSubsystem::LoadSoundFromWavFile(const std::string &path) {
     auto fullWavFilePath = GetRootPath() /= std::filesystem::path(path);
     auto loadedSound = Mix_LoadWAV(fullWavFilePath.c_str());
     if (loadedSound == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to load sound .wav file " << path;
+        SIMPLE_2D_LOG_ERROR << "Failed to load sound .wav file " << path;
         return nullptr;
     }
     return ManagedSound(loadedSound, soundDeleter);
@@ -88,7 +90,7 @@ simple_2d::ManagedMusic simple_2d::AudioSubsystem::LoadMusicFromMp3File(const st
     auto full_wav_file_path = GetRootPath() /= std::filesystem::path(path);
     auto loaded_music = Mix_LoadMUS(full_wav_file_path.c_str());
     if (loaded_music == nullptr) {
-        BOOST_LOG_TRIVIAL(error) << "Failed to load music .wav file " << path;
+        SIMPLE_2D_LOG_ERROR << "Failed to load music .wav file " << path;
         return nullptr;
     }
     return ManagedMusic(loaded_music, musicDeleter);
@@ -101,7 +103,7 @@ simple_2d::Error simple_2d::AudioSubsystem::PlaySound(const ManagedSound &sound,
     }
     int playingChannel = Mix_PlayChannel(-1, sound.get(), loopNum);
     if (playingChannel == -1) {
-        BOOST_LOG_TRIVIAL(error) << "Cannot play sound at the moment!" << SDL_GetError();
+        SIMPLE_2D_LOG_ERROR << "Cannot play sound at the moment!" << SDL_GetError();
         return Error::AUDIO;
     }
     mPlayingSounds[playingChannel] = sound;
@@ -115,7 +117,7 @@ simple_2d::Error simple_2d::AudioSubsystem::PlayMusic(const ManagedMusic &music,
         loopNum = INT_MAX;
     }
     if (!Mix_PlayMusic(music.get(), loopNum)) {
-        BOOST_LOG_TRIVIAL(error) << "Cannot play music at the moment! Get error \"" << SDL_GetError() << "\"";
+        SIMPLE_2D_LOG_ERROR << "Cannot play music at the moment! Get error \"" << SDL_GetError() << "\"";
         return Error::AUDIO;
     }
     // Play music is simple: just stop current music and play this music
