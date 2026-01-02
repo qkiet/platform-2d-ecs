@@ -4,61 +4,34 @@ project(flappy-bird-2d)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
-add_subdirectory(3rd-party/SDL EXCLUDE_FROM_ALL)
-add_subdirectory(3rd-party/SDL_image EXCLUDE_FROM_ALL)
-add_subdirectory(3rd-party/SDL_mixer EXCLUDE_FROM_ALL)
-add_subdirectory(3rd-party/json EXCLUDE_FROM_ALL)
-add_subdirectory(3rd-party/plog EXCLUDE_FROM_ALL)
-
-set(SIMPLE_2D_SRCS
-        simple-2d/src/core.cpp
-        simple-2d/src/graphics.cpp
-        simple-2d/src/audio.cpp
-        simple-2d/src/internal_utils.cpp
-        simple-2d/src/component.cpp
-        simple-2d/src/entity.cpp
-        simple-2d/src/camera.cpp
-        simple-2d/src/scene.cpp
-        simple-2d/src/geometry.cpp
-        simple-2d/src/components/static_sprite.cpp
-        simple-2d/src/components/motion.cpp
-        simple-2d/src/components/downward_gravity.cpp
-        simple-2d/src/components/animated_sprite.cpp
-        simple-2d/src/components/json.cpp
-        simple-2d/src/components/behavior_script.cpp
-        simple-2d/src/components/static_repetitive_sprite.cpp
-        simple-2d/src/components/collision_body.cpp
-        src/player.cpp
-        src/ground.cpp
-        src/enemy.cpp
-)
+add_subdirectory(simple-2d EXCLUDE_FROM_ALL)
 
 add_executable(platform_2d
-        src/main.cpp
-        ${SIMPLE_2D_SRCS}
-        # src/logic.cpp
+    src/main.cpp
+    src/enemy.cpp
+    src/ground.cpp
+    src/player.cpp
 )
 
-target_include_directories(platform_2d PRIVATE simple-2d/include)
 
-target_link_libraries(platform_2d PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer nlohmann_json::nlohmann_json plog::plog)
+target_link_libraries(platform_2d PRIVATE simple-2d)
 
 install(TARGETS platform_2d
 )
 install(FILES assets/player_idle_1.png
-        DESTINATION assets
+    DESTINATION assets
 )
 install(FILES assets/player_idle_2.png
-        DESTINATION assets
+    DESTINATION assets
 )
 install(FILES assets/player_idle_3.png
-        DESTINATION assets
+     DESTINATION assets
 )
 
 install(FILES assets/ground_tile.png
-        DESTINATION assets
+     DESTINATION assets
 )
 
 install(FILES assets/sine.wav
-        DESTINATION assets
+     DESTINATION assets
 )

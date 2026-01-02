@@ -1,15 +1,15 @@
 [submodule "3rd-party/SDL"]
-	path = 3rd-party/SDL
+	path = simple-2d/3rd-party/SDL
 	url = git@github.com:libsdl-org/SDL.git
 [submodule "3rd-party/SDL_image"]
-	path = 3rd-party/SDL_image
+	path = simple-2d/3rd-party/SDL_image
 	url = git@github.com:libsdl-org/SDL_image.git
 [submodule "3rd-party/SDL_mixer"]
-	path = 3rd-party/SDL_mixer
+	path = simple-2d/3rd-party/SDL_mixer
 	url = git@github.com:libsdl-org/SDL_mixer.git
 [submodule "3rd-party/json"]
-	path = 3rd-party/json
+	path = simple-2d/3rd-party/json
 	url = git@github.com:nlohmann/json.git
 [submodule "3rd-party/plog"]
-	path = 3rd-party/plog
+	path = simple-2d/3rd-party/plog
 	url = https://github.com/SergiusTheBest/plog
