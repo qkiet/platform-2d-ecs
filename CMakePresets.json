@@ -30,6 +30,27 @@
                 "vendored_default": "ON" 
             },
             "toolchainFile": "cmake/toolchain-cross_compile-x64_linux_mingw.cmake"
+        },
+        {
+            "name": "windows-vstudio-2022",
+            "displayName": "Windows x64 Debug",
+            "description": "Visual Studio 17 2022 CMake Preset",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioSettings/CMake/1.0": {
+                "hostOS": [ "Windows" ]
+                }
+            }
         }
     ]
 }
