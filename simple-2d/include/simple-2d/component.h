@@ -9,6 +9,7 @@
 #include <SDL3/SDL_events.h>
 #include <functional>
 #include "generic_types.h"
+#include <string>
 
 namespace simple_2d {
 
