@@ -10,12 +10,14 @@ namespace simple_2d {
         bool mIsInitialized = false;
         RectangularDimensions<int> mDimensions;
         std::shared_ptr<ComponentManager> mComponentManagers[MAX_COMPONENT_TYPES];
+        std::vector<EntityId> mEntityIdsToDelete;
     public:
         Scene(RectangularDimensions<int> dimensions);
         ~Scene() = default;
         Error Init();
         RectangularDimensions<int> GetDimensions() const;
         std::shared_ptr<ComponentManager> GetComponentManager(ComponentType componentType) const;
+        void RequestDeleteEntity(EntityId entityId);
         Error Step();
     };
 }

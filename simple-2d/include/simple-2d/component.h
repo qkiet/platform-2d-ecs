@@ -55,6 +55,7 @@ namespace simple_2d {
         // This function is simply a wrapper for DoStep. Do logging things primarily
         void Step();
         void RemoveEntity(EntityId id);
+        void RemoveComponentOfEntity(EntityId id);
     protected:
         // How component manager process each tick is different. For example, most components only loop through all components
         // and call their Step() method. But some components, like collison body, will have special logic that call each component's

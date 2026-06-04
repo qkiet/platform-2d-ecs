@@ -49,6 +49,22 @@ simple_2d::Error simple_2d::Scene::Step() {
     mComponentManagers[ANIMATED_SPITE]->Step();
     mComponentManagers[STATIC_REPETITIVE_SPRITE]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component managers done";
+    // Delete queued entity Id
+    // NOTE: I really don't know whether this is good idea for removing entity from scene. I choose
+    // this solution because I think that removing it after step through all component manager is better idea
+    // than remove enity inside step function
+    for (auto &entityId: mEntityIdsToDelete) {
+        // To remove entity is simple: just remove every component of that entity
+        // RemoveEntity a non-existing component of entity is OK
+        mComponentManagers[BEHAVIOR_SCRIPT]->RemoveComponentOfEntity(entityId);
+        mComponentManagers[DOWNWARD_GRAVITY]->RemoveComponentOfEntity(entityId);
+        mComponentManagers[STATIC_SPRITE]->RemoveComponentOfEntity(entityId);
+        mComponentManagers[COLLISION_BODY]->RemoveComponentOfEntity(entityId);
+        mComponentManagers[MOTION]->RemoveComponentOfEntity(entityId);
+        mComponentManagers[ANIMATED_SPITE]->RemoveComponentOfEntity(entityId);
+        mComponentManagers[STATIC_REPETITIVE_SPRITE]->RemoveComponentOfEntity(entityId);
+    }
+    mEntityIdsToDelete.clear();
     return Error::OK;
 }
 

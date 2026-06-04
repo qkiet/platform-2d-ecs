@@ -77,3 +77,12 @@ std::shared_ptr<simple_2d::Component> simple_2d::ComponentManager::GetComponent(
     }
     return it->second;
 }
+
+void simple_2d::ComponentManager::RemoveComponentOfEntity(EntityId id) {
+    auto it = mComponents.find(id);
+    if (it == mComponents.end()) {
+        SIMPLE_2D_LOG_WARNING << "Cannot delete component \"" << mComponentManagerName << "\" for entity " << id << " because component not exist";
+        return;
+    }
+    mComponents.erase(it);
+}

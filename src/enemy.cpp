@@ -38,6 +38,11 @@ simple_2d::Error Enemy::Init() {
         SIMPLE_2D_LOG_ERROR << "Failed to add collision_body component";
         return error;
     }
+    error = AddComponent(simple_2d::ComponentType::BEHAVIOR_SCRIPT);
+    if (error != simple_2d::Error::OK) {
+        SIMPLE_2D_LOG_ERROR << "Failed to add behaviro_script component";
+        return error;
+    }
     auto animatedSprite = std::static_pointer_cast<simple_2d::AnimatedSprite>(GetComponent(simple_2d::ComponentType::ANIMATED_SPITE));
     auto bitmap = engine.GetGraphics().LoadImageFromFile("assets/player_idle_1.png");
     animatedSprite->AddAnimation(0, bitmap.texture, 5);
@@ -52,7 +57,8 @@ simple_2d::Error Enemy::Init() {
     auto json = std::static_pointer_cast<simple_2d::JsonComponent>(GetComponent(simple_2d::ComponentType::JSON));
     json->SetJson(nlohmann::json::parse(R"(
         {
-            "type": "enemy"
+            "type": "enemy",
+            "is_dead": true
         }
     )"));
     auto collisionBody = std::static_pointer_cast<simple_2d::CollisionBodyComponent>(GetComponent(simple_2d::ComponentType::COLLISION_BODY));
@@ -77,7 +83,27 @@ simple_2d::Error Enemy::Init() {
             collisionBody1->SetEnabled(false);
             motionComponent1->SetVelocityOneAxis(simple_2d::Axis::Y, -JUMP_INITIAL_SPEED_WHEN_PLAYER_HIT_HEAD);
             SIMPLE_2D_LOG_INFO << "Enemy is dead";
+            jsonData1["is_dead"] = true;
         }
+    });
+    // This ontick callback is simple for cleaning up enemy if they're dead and fall to certain distance
+    auto behaviorScript = std::static_pointer_cast<simple_2d::BehaviorScript>(GetComponent(simple_2d::ComponentType::BEHAVIOR_SCRIPT));
+    behaviorScript->SetOnTickEventCallback([](simple_2d::EntityId entityId){\
+        auto &engine = simple_2d::Engine::GetInstance();
+        auto jsonComponent = std::static_pointer_cast<simple_2d::JsonComponent>(engine.GetComponentManager(simple_2d::ComponentType::JSON)->GetComponent(entityId));
+        auto jsonData = jsonComponent->GetJson();
+        if (!jsonData["is_dead"]) {
+            return;
+        }
+        auto motionComponent = std::static_pointer_cast<simple_2d::MotionComponent>(engine.GetComponentManager(simple_2d::ComponentType::MOTION)->GetComponent(entityId));
+        auto posY = motionComponent->GetPositionOneAxis(simple_2d::Axis::Y);
+        SIMPLE_2D_LOG_DEBUG << "Position of enemy is " << posY;
+        if (posY > 500) {
+            auto scene = engine.GetCurrentScene();
+            SIMPLE_2D_LOG_DEBUG << "Enemy is requested to be deleted now!";
+            scene->RequestDeleteEntity(entityId);
+        }
+
     });
     return simple_2d::Error::OK;
 }
