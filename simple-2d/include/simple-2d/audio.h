@@ -4,6 +4,7 @@
 #include <SDL3_mixer/SDL_mixer.h>
 #include <memory>
 #include <map>
+#include <string>
 
 namespace simple_2d {
 

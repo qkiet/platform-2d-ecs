@@ -20,7 +20,7 @@
 #define TICK_INTERVAL_MSEC 1000 / TICK_PER_SEC
 
 
-static uint32_t get_remaining_ticks(const std::chrono::system_clock::time_point &last_tick_ts ) {
+static uint32_t get_remaining_ticks(const std::chrono::high_resolution_clock::time_point &last_tick_ts ) {
     const auto current_ts = std::chrono::high_resolution_clock::now();
     const auto elapsed_msec = std::chrono::duration_cast<std::chrono::milliseconds>(current_ts - last_tick_ts);
     return elapsed_msec / std::chrono::milliseconds(TICK_INTERVAL_MSEC);

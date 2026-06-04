@@ -78,7 +78,7 @@ void simple_2d::AudioSubsystem::Deinit() {
 
 simple_2d::ManagedSound simple_2d::AudioSubsystem::LoadSoundFromWavFile(const std::string &path) {
     auto fullWavFilePath = GetRootPath() /= std::filesystem::path(path);
-    auto loadedSound = Mix_LoadWAV(fullWavFilePath.c_str());
+    auto loadedSound = Mix_LoadWAV(fullWavFilePath.string().c_str());
     if (loadedSound == nullptr) {
         SIMPLE_2D_LOG_ERROR << "Failed to load sound .wav file " << path;
         return nullptr;
@@ -88,7 +88,7 @@ simple_2d::ManagedSound simple_2d::AudioSubsystem::LoadSoundFromWavFile(const st
 
 simple_2d::ManagedMusic simple_2d::AudioSubsystem::LoadMusicFromMp3File(const std::string &path) {
     auto full_wav_file_path = GetRootPath() /= std::filesystem::path(path);
-    auto loaded_music = Mix_LoadMUS(full_wav_file_path.c_str());
+    auto loaded_music = Mix_LoadMUS(full_wav_file_path.string().c_str());
     if (loaded_music == nullptr) {
         SIMPLE_2D_LOG_ERROR << "Failed to load music .wav file " << path;
         return nullptr;

@@ -48,7 +48,7 @@ void simple_2d::GraphicsSubsystem::Deinit() {
 simple_2d::BitmapBundle simple_2d::GraphicsSubsystem::LoadImageFromFile(const std::string &path) {
     SIMPLE_2D_LOG_INFO << "Loading image file " << path;
     auto fullImagePath = GetRootPath() /= std::filesystem::path(path);
-    auto loadedSurface = IMG_Load(fullImagePath.c_str());
+    auto loadedSurface = IMG_Load(fullImagePath.string().c_str());
     BitmapBundle ret = {
         .surface = nullptr,
         .texture = nullptr,
