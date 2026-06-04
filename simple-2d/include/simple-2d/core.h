@@ -75,7 +75,7 @@ namespace simple_2d {
          */
         Error PrepareTextureForRendering(const ManagedTexture &texture, XYCoordinate<float> pos);
 
-        std::shared_ptr<ComponentManager> GetComponentManager(const std::string& component_name) const;
+        std::shared_ptr<ComponentManager> GetComponentManager(ComponentType componentType) const;
         std::vector<SDL_Event> GetEvents() const;
     };
 };

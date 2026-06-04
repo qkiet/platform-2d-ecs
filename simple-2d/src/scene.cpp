@@ -21,41 +21,40 @@ simple_2d::Error simple_2d::Scene::Init() {
         return Error::OK;
     }
     mIsInitialized = true;
-    mComponentManagers["behavior_script"] = std::make_shared<BehaviorScriptComponentManager>();
-    mComponentManagers["downward_gravity"] = std::make_shared<DownwardGravityComponentManager>();
-    mComponentManagers["static_sprite"] = std::make_shared<StaticSpriteComponentManager>();
-    mComponentManagers["motion"] = std::make_shared<MotionComponentManager>();
-    mComponentManagers["animated_sprite"] = std::make_shared<AnimatedSpriteComponentManager>();
-    mComponentManagers["json"] = std::make_shared<JsonComponentManager>();
-    mComponentManagers["static_repetitive_sprite"] = std::make_shared<StaticRepetitiveSpriteComponentManager>();
-    mComponentManagers["collision_body"] = std::make_shared<CollisionBodyComponentManager>();
+    mComponentManagers[BEHAVIOR_SCRIPT] = std::make_shared<BehaviorScriptComponentManager>();
+    mComponentManagers[DOWNWARD_GRAVITY] = std::make_shared<DownwardGravityComponentManager>();
+    mComponentManagers[STATIC_SPRITE] = std::make_shared<StaticSpriteComponentManager>();
+    mComponentManagers[MOTION] = std::make_shared<MotionComponentManager>();
+    mComponentManagers[ANIMATED_SPITE] = std::make_shared<AnimatedSpriteComponentManager>();
+    mComponentManagers[JSON] = std::make_shared<JsonComponentManager>();
+    mComponentManagers[STATIC_REPETITIVE_SPRITE] = std::make_shared<StaticRepetitiveSpriteComponentManager>();
+    mComponentManagers[COLLISION_BODY] = std::make_shared<CollisionBodyComponentManager>();
     return Error::OK;
 }
 
-std::shared_ptr<simple_2d::ComponentManager> simple_2d::Scene::GetComponentManager(const std::string& component_name) const {
-    auto it = mComponentManagers.find(component_name);
-    if (it == mComponentManagers.end()) {
-        SIMPLE_2D_LOG_ERROR << "Component manager not found: " << component_name;
+std::shared_ptr<simple_2d::ComponentManager> simple_2d::Scene::GetComponentManager(ComponentType componentType) const {
+    if ((componentType < BEGIN_COMPONENT_TYPE) || (componentType > MAX_COMPONENT_TYPES)) {
+        SIMPLE_2D_LOG_ERROR << "Accessing wrong component type " << componentType;
         return nullptr;
     }
-    return it->second;
+    return mComponentManagers[componentType];
 }
 
 simple_2d::Error simple_2d::Scene::Step() {
     SIMPLE_2D_LOG_DEBUG << "Stepping component manager behavior_script";
-    mComponentManagers["behavior_script"]->Step();
+    mComponentManagers[BEHAVIOR_SCRIPT]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component manager downward_gravity";
-    mComponentManagers["downward_gravity"]->Step();
+    mComponentManagers[DOWNWARD_GRAVITY]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component manager static_sprite";
-    mComponentManagers["static_sprite"]->Step();
+    mComponentManagers[STATIC_SPRITE]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component manager collision_body";
-    mComponentManagers["collision_body"]->Step();
+    mComponentManagers[COLLISION_BODY]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component manager motion";
-    mComponentManagers["motion"]->Step();
+    mComponentManagers[MOTION]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component manager animated_sprite";
-    mComponentManagers["animated_sprite"]->Step();
+    mComponentManagers[ANIMATED_SPITE]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component manager static_repetitive_sprite";
-    mComponentManagers["static_repetitive_sprite"]->Step();
+    mComponentManagers[STATIC_REPETITIVE_SPRITE]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component managers done";
     return Error::OK;
 }

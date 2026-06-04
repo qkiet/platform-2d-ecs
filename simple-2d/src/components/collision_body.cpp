@@ -36,7 +36,7 @@ simple_2d::XYCoordinate<float> simple_2d::CollisionBodyComponent::GetOffset() co
 }
 
 std::pair<simple_2d::Error, simple_2d::Rectangle<float>> simple_2d::CollisionBodyComponent::GetCollisionBox() const {
-    auto motionComponentManager = Engine::GetInstance().GetComponentManager("motion");
+    auto motionComponentManager = Engine::GetInstance().GetComponentManager(ComponentType::MOTION);
     if (motionComponentManager == nullptr) {
         SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
         return {Error::NOT_EXISTS, Rectangle<float>()};
@@ -53,7 +53,7 @@ std::pair<simple_2d::Error, simple_2d::Rectangle<float>> simple_2d::CollisionBod
 }
 
 std::pair<simple_2d::Error, simple_2d::Rectangle<float>> simple_2d::CollisionBodyComponent::GetCollisionBoxNextTick() const {
-    auto motionComponentManager = Engine::GetInstance().GetComponentManager("motion");
+    auto motionComponentManager = Engine::GetInstance().GetComponentManager(ComponentType::MOTION);
     if (motionComponentManager == nullptr) {
         SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
         return {Error::NOT_EXISTS, Rectangle<float>()};
@@ -112,7 +112,7 @@ void simple_2d::CollisionBodyComponentManager::Step() {
             SIMPLE_2D_LOG_DEBUG << "Collision body component is not enabled for entity " << collisionBodyComponent->GetEntityId();
             continue;
         }
-        auto motionComponentManager = Engine::GetInstance().GetComponentManager("motion");
+        auto motionComponentManager = Engine::GetInstance().GetComponentManager(ComponentType::MOTION);
         if (motionComponentManager == nullptr) {
             SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
             continue;
@@ -301,7 +301,7 @@ void simple_2d::CollisionBodyComponentManager::Step() {
                 auto distanceCb1TopEdgeToCb2BottomEdgeNextTick = GetDistanceBetweenAxisAlignedEdges(cbNextTick1TopEdge, cbNextTick2BottomEdge);
                 auto interpolateMotionForCollidingEntities = [this, distanceCb1BottomEdgeToCb2TopEdgeNextTick, distanceCb1LeftEdgeToCb2RightEdgeNextTick, distanceCb1RightEdgeToCb2LeftEdgeNextTick, distanceCb1TopEdgeToCb2BottomEdgeNextTick](EntityId entityId1, EntityId entityId2, simple_2d::CollisionBodyComponent::CollisionType collisionType) {
                     SIMPLE_2D_LOG_DEBUG << "Interpolating motion for entities " << entityId1 << " and " << entityId2 << " with collision type " << collisionType;
-                    auto motionComponentManager = Engine::GetInstance().GetComponentManager("motion");
+                    auto motionComponentManager = Engine::GetInstance().GetComponentManager(ComponentType::MOTION);
                     if (motionComponentManager == nullptr) {
                         SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
                         return;

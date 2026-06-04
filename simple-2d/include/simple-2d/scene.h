@@ -9,13 +9,13 @@ namespace simple_2d {
     private:
         bool mIsInitialized = false;
         RectangularDimensions<int> mDimensions;
-        std::map<std::string, std::shared_ptr<ComponentManager>> mComponentManagers;
+        std::shared_ptr<ComponentManager> mComponentManagers[MAX_COMPONENT_TYPES];
     public:
         Scene(RectangularDimensions<int> dimensions);
         ~Scene() = default;
         Error Init();
         RectangularDimensions<int> GetDimensions() const;
-        std::shared_ptr<ComponentManager> GetComponentManager(const std::string& component_name) const;
+        std::shared_ptr<ComponentManager> GetComponentManager(ComponentType componentType) const;
         Error Step();
     };
 }

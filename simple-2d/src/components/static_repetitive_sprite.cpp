@@ -61,7 +61,7 @@ simple_2d::Error simple_2d::StaticRepetitiveSpriteComponent::Step() {
         RebuildTexture();
         mNeedsRebuildTexture = false;
     }
-    auto componentManager = simple_2d::Engine::GetInstance().GetComponentManager("motion");
+    auto componentManager = simple_2d::Engine::GetInstance().GetComponentManager(ComponentType::MOTION);
     if (componentManager == nullptr) {
         SIMPLE_2D_LOG_ERROR << "Failed to get motion component manager";
         return Error::NOT_EXISTS;

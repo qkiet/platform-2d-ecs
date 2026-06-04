@@ -17,33 +17,29 @@ simple_2d::ComponentManager::~ComponentManager() {
     SIMPLE_2D_LOG_DEBUG << "ComponentManager destructor " << this;
 }
 
-std::shared_ptr<simple_2d::Component> simple_2d::Component::CreateComponent(std::string componentName, EntityId entityId) {
-    if (componentName == "animated_sprite") {
+std::shared_ptr<simple_2d::Component> simple_2d::Component::CreateComponent(ComponentType componentType, EntityId entityId) {
+    switch (componentType)
+    {
+    case ANIMATED_SPITE:
         return std::make_shared<simple_2d::AnimatedSprite>(entityId);
-    }
-    if (componentName == "motion") {
-        return std::make_shared<simple_2d::MotionComponent>(entityId);
-    }
-    if (componentName == "downward_gravity") {
-        return std::make_shared<simple_2d::DownwardGravity>(entityId);
-    }
-    if (componentName == "static_sprite") {
-        return std::make_shared<simple_2d::StaticSpriteComponent>(entityId);
-    }
-    if (componentName == "json") {
-        return std::make_shared<simple_2d::JsonComponent>(entityId);
-    }
-    if (componentName == "behavior_script") {
+    case BEHAVIOR_SCRIPT:
         return std::make_shared<simple_2d::BehaviorScript>(entityId);
-    }
-    if (componentName == "static_repetitive_sprite") {
-        return std::make_shared<simple_2d::StaticRepetitiveSpriteComponent>(entityId);
-    }
-    if (componentName == "collision_body") {
+    case COLLISION_BODY:
         return std::make_shared<simple_2d::CollisionBodyComponent>(entityId);
+    case DOWNWARD_GRAVITY:
+        return std::make_shared<simple_2d::DownwardGravity>(entityId);
+    case STATIC_SPRITE:
+        return std::make_shared<simple_2d::StaticSpriteComponent>(entityId);
+    case STATIC_REPETITIVE_SPRITE:
+        return std::make_shared<simple_2d::StaticRepetitiveSpriteComponent>(entityId);
+    case MOTION:
+        return std::make_shared<simple_2d::MotionComponent>(entityId);
+    case JSON:
+        return std::make_shared<simple_2d::JsonComponent>(entityId);
+    default:
+        SIMPLE_2D_LOG_ERROR << "Component type " << componentType << " not supported!";
+        return nullptr;
     }
-    SIMPLE_2D_LOG_ERROR << "Failed to create component " << componentName;
-    return nullptr;
 }
 
 void simple_2d::Component::SetEntityId(EntityId id) {

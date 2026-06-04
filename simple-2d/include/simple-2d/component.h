@@ -11,13 +11,25 @@
 #include "generic_types.h"
 
 namespace simple_2d {
+    enum ComponentType {
+        BEGIN_COMPONENT_TYPE,
+        ANIMATED_SPITE,
+        BEHAVIOR_SCRIPT,
+        COLLISION_BODY,
+        DOWNWARD_GRAVITY,
+        JSON,
+        MOTION,
+        STATIC_REPETITIVE_SPRITE,
+        STATIC_SPRITE,
+        MAX_COMPONENT_TYPES
+    };
 
     class Component {
     public:
         void SetEntityId(EntityId id);
         EntityId GetEntityId() const;
         virtual Error Step() = 0;
-        static std::shared_ptr<Component> CreateComponent(std::string componentName, EntityId entityId);
+        static std::shared_ptr<Component> CreateComponent(ComponentType componentType, EntityId entityId);
     protected:
         // This field is used by component itself to locate other components with same entity id. For example, a game object
         // that has sprite component might want to know motion component of itself to know where to draw the sprite.

@@ -87,8 +87,8 @@ std::shared_ptr<simple_2d::Scene> simple_2d::Engine::GetCurrentScene() const {
     return mCurrentScene;
 }
 
-std::shared_ptr<simple_2d::ComponentManager> simple_2d::Engine::GetComponentManager(const std::string& componentName) const {
-    return mCurrentScene->GetComponentManager(componentName);
+std::shared_ptr<simple_2d::ComponentManager> simple_2d::Engine::GetComponentManager(ComponentType componentType) const {
+    return mCurrentScene->GetComponentManager(componentType);
 }
 
 simple_2d::Camera& simple_2d::Engine::GetCamera() {
