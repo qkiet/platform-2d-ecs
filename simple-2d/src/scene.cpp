@@ -41,20 +41,19 @@ std::shared_ptr<simple_2d::ComponentManager> simple_2d::Scene::GetComponentManag
 }
 
 simple_2d::Error simple_2d::Scene::Step() {
-    SIMPLE_2D_LOG_DEBUG << "Stepping component manager behavior_script";
     mComponentManagers[BEHAVIOR_SCRIPT]->Step();
-    SIMPLE_2D_LOG_DEBUG << "Stepping component manager downward_gravity";
     mComponentManagers[DOWNWARD_GRAVITY]->Step();
-    SIMPLE_2D_LOG_DEBUG << "Stepping component manager static_sprite";
     mComponentManagers[STATIC_SPRITE]->Step();
-    SIMPLE_2D_LOG_DEBUG << "Stepping component manager collision_body";
     mComponentManagers[COLLISION_BODY]->Step();
-    SIMPLE_2D_LOG_DEBUG << "Stepping component manager motion";
     mComponentManagers[MOTION]->Step();
-    SIMPLE_2D_LOG_DEBUG << "Stepping component manager animated_sprite";
     mComponentManagers[ANIMATED_SPITE]->Step();
-    SIMPLE_2D_LOG_DEBUG << "Stepping component manager static_repetitive_sprite";
     mComponentManagers[STATIC_REPETITIVE_SPRITE]->Step();
     SIMPLE_2D_LOG_DEBUG << "Stepping component managers done";
     return Error::OK;
+}
+
+
+void simple_2d::Scene::RequestDeleteEntity(EntityId entityId) {
+    SIMPLE_2D_LOG_DEBUG << "Request delete entity " << entityId;
+    mEntityIdsToDelete.push_back(entityId);
 }
