@@ -22,9 +22,9 @@ namespace simple_2d {
 
     class BehaviorScriptComponentManager : public ComponentManager {
     public:
-        BehaviorScriptComponentManager() = default;
+        BehaviorScriptComponentManager();
         ~BehaviorScriptComponentManager() = default;
-        void Step() override;
+        void DoStep() override;
     };
 }
 

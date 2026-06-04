@@ -39,9 +39,9 @@ namespace simple_2d {
 
     class MotionComponentManager : public ComponentManager {
     public:
-        MotionComponentManager() = default;
+        MotionComponentManager();
         ~MotionComponentManager() = default;
-        void Step() override;
+        void DoStep() override;
     };
 }
 

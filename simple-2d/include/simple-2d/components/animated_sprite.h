@@ -41,9 +41,9 @@ namespace simple_2d {
 
     class AnimatedSpriteComponentManager : public ComponentManager {
     public:
-        AnimatedSpriteComponentManager() = default;
+        AnimatedSpriteComponentManager();
         ~AnimatedSpriteComponentManager() = default;
-        void Step() override;
+        void DoStep() override;
     };
 }
 #endif // SIMPLE_2D_COMPONENT_ANIMATED_SPRITE_H

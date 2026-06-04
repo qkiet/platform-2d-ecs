@@ -85,6 +85,7 @@ simple_2d::Error simple_2d::CollisionBodyComponent::Step() {
 }
 
 simple_2d::CollisionBodyComponentManager::CollisionBodyComponentManager() {
+    SetName("collision_body");
     // Because component manager are part of the scene, we can guarantee that current scene is not null
     auto sceneDimensions = Engine::GetInstance().GetCurrentScene()->GetDimensions();
     // Calculate the number of cells in the x and y directions
@@ -103,7 +104,7 @@ simple_2d::CollisionBodyComponentManager::CollisionCellId simple_2d::CollisionBo
 }
 
 
-void simple_2d::CollisionBodyComponentManager::Step() {
+void simple_2d::CollisionBodyComponentManager::DoStep() {
     // Update the collision cell entities map
     mCollisionCellEntitiesMap.clear();
     for (auto &component : mComponents) {

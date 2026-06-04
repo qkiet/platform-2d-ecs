@@ -17,9 +17,9 @@ namespace simple_2d {
 
     class JsonComponentManager : public ComponentManager {
     public:
-        JsonComponentManager() = default;
+        JsonComponentManager();
         ~JsonComponentManager() = default;
-        void Step() override;
+        void DoStep() override;
     };
 }
 #endif // SIMPLE_2D_COMPONENTS_JSON_H

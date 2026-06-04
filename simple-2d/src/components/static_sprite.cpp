@@ -47,7 +47,11 @@ simple_2d::Error simple_2d::StaticSpriteComponent::Step() {
     return simple_2d::Error::OK;
 }
 
-void simple_2d::StaticSpriteComponentManager::Step() {
+simple_2d::StaticSpriteComponentManager::StaticSpriteComponentManager() {
+    SetName("static_sprite");
+}
+
+void simple_2d::StaticSpriteComponentManager::DoStep() {
     for (auto &component : mComponents) {
         auto staticSprite = std::static_pointer_cast<StaticSpriteComponent>(component.second);
         staticSprite->Step();

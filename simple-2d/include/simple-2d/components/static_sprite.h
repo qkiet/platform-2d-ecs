@@ -26,9 +26,9 @@ namespace simple_2d {
 
     class StaticSpriteComponentManager : public ComponentManager {
     public:
-        StaticSpriteComponentManager() = default;
+        StaticSpriteComponentManager();
         ~StaticSpriteComponentManager() = default;
-        void Step() override;
+        void DoStep() override;
     };
 }; // simple_2d
 

@@ -88,7 +88,11 @@ simple_2d::XYCoordinate<float> simple_2d::AnimatedSprite::GetOffset() const {
     return mOffset;
 }
 
-void simple_2d::AnimatedSpriteComponentManager::Step() {
+simple_2d::AnimatedSpriteComponentManager::AnimatedSpriteComponentManager() {
+    SetName("animated_sprite");
+}
+
+void simple_2d::AnimatedSpriteComponentManager::DoStep() {
     for (auto &component : mComponents) {
         auto animatedSprite = std::static_pointer_cast<AnimatedSprite>(component.second);
         animatedSprite->Step();

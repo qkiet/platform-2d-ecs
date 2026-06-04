@@ -24,7 +24,11 @@ simple_2d::Error simple_2d::DownwardGravity::Step() {
     return Error::OK;
 }
 
-void simple_2d::DownwardGravityComponentManager::Step() {
+simple_2d::DownwardGravityComponentManager::DownwardGravityComponentManager() {
+    SetName("downward_gravity");
+}
+
+void simple_2d::DownwardGravityComponentManager::DoStep() {
     for (auto &component : mComponents) {
         auto downwardGravity = std::static_pointer_cast<DownwardGravity>(component.second);
         downwardGravity->Step();

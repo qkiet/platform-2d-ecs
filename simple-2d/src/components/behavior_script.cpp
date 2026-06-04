@@ -38,8 +38,11 @@ simple_2d::Error simple_2d::BehaviorScript::Step() {
     return Error::OK;
 }
 
+simple_2d::BehaviorScriptComponentManager::BehaviorScriptComponentManager() {
+    SetName("behavior_script");
+}
 
-void simple_2d::BehaviorScriptComponentManager::Step() {
+void simple_2d::BehaviorScriptComponentManager::DoStep() {
     for (auto &component : mComponents) {
         auto behaviorScript = std::static_pointer_cast<BehaviorScript>(component.second);
         behaviorScript->Step();

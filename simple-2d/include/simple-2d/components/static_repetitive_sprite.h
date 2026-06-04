@@ -30,9 +30,9 @@ namespace simple_2d {
 
     class StaticRepetitiveSpriteComponentManager : public ComponentManager {
     public:
-        StaticRepetitiveSpriteComponentManager() = default;
+        StaticRepetitiveSpriteComponentManager();
         ~StaticRepetitiveSpriteComponentManager() = default;
-        void Step() override;
+        void DoStep() override;
     };
 }; // simple_2d
 

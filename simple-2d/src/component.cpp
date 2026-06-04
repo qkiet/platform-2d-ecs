@@ -17,6 +17,16 @@ simple_2d::ComponentManager::~ComponentManager() {
     SIMPLE_2D_LOG_DEBUG << "ComponentManager destructor " << this;
 }
 
+void simple_2d::ComponentManager::SetName(std::string name) {
+    mComponentManagerName = name;
+    SIMPLE_2D_LOG_INFO << "Set component manager " << this << " name to " << name;
+}
+
+void simple_2d::ComponentManager::Step() {
+    SIMPLE_2D_LOG_INFO << "Stepping component manager \"" << mComponentManagerName << "\"";
+    DoStep();
+}
+
 std::shared_ptr<simple_2d::Component> simple_2d::Component::CreateComponent(ComponentType componentType, EntityId entityId) {
     switch (componentType)
     {
@@ -62,7 +72,7 @@ void simple_2d::ComponentManager::RegisterNewEntity(simple_2d::EntityId id, std:
 std::shared_ptr<simple_2d::Component> simple_2d::ComponentManager::GetComponent(EntityId id) const {
     auto it = mComponents.find(id);
     if (it == mComponents.end()) {
-        SIMPLE_2D_LOG_ERROR << "Component not found for entity " << id;
+        SIMPLE_2D_LOG_ERROR << "Not found component \"" << mComponentManagerName << "\" for entity " << id;
         return nullptr;
     }
     return it->second;

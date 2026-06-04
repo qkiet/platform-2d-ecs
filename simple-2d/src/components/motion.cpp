@@ -158,7 +158,11 @@ simple_2d::Error simple_2d::MotionComponent::Step() {
     return simple_2d::Error::OK;
 }
 
-void simple_2d::MotionComponentManager::Step() {
+simple_2d::MotionComponentManager::MotionComponentManager() {
+    SetName("motion");
+}
+
+void simple_2d::MotionComponentManager::DoStep() {
     for (auto &component : mComponents) {
         auto motionComponent = std::static_pointer_cast<MotionComponent>(component.second);
         motionComponent->Step();

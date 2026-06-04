@@ -13,9 +13,9 @@ namespace simple_2d {
 
     class DownwardGravityComponentManager : public ComponentManager {
     public:
-        DownwardGravityComponentManager() = default;
+        DownwardGravityComponentManager();
         ~DownwardGravityComponentManager() = default;
-        void Step() override;
+        void DoStep() override;
     };
 }
 

@@ -51,7 +51,7 @@ namespace simple_2d {
         typedef uint32_t CollisionCellId;
         CollisionBodyComponentManager();
         ~CollisionBodyComponentManager() = default;
-        void Step() override;
+        void DoStep() override;
     private:
         // Each cell will have a list of unique entities that are in the cell.
         std::map<CollisionCellId, std::set<EntityId>> mCollisionCellEntitiesMap;
