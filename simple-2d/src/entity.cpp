@@ -27,7 +27,7 @@ simple_2d::Error simple_2d::Entity::AddComponent(ComponentType componentType) {
         return Error::NOT_EXISTS;
     }
     componentManager->RegisterNewEntity(mEntityId, component);
-    SIMPLE_2D_LOG_INFO << "Added component " << componentType << " for entity " << mEntityId;
+    SIMPLE_2D_LOG_INFO << "Added component \"" << componentManager->GetName() << "\" for entity " << mEntityId;
     return Error::OK;
 }
 

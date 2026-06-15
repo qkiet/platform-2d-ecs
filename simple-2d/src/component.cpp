@@ -22,6 +22,10 @@ void simple_2d::ComponentManager::SetName(std::string name) {
     SIMPLE_2D_LOG_INFO << "Set component manager " << this << " name to " << name;
 }
 
+std::string simple_2d::ComponentManager::GetName() {
+    return mComponentManagerName;
+}
+
 void simple_2d::ComponentManager::Step() {
     SIMPLE_2D_LOG_INFO << "Stepping component manager \"" << mComponentManagerName << "\"";
     DoStep();

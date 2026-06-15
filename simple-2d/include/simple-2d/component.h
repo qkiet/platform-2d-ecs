@@ -50,6 +50,7 @@ namespace simple_2d {
         ComponentManager();
         ~ComponentManager();
         void SetName(std::string name);
+        std::string GetName();
         void RegisterNewEntity(EntityId id, std::shared_ptr<Component> component);
         std::shared_ptr<Component> GetComponent(EntityId id) const;
         // This function is simply a wrapper for DoStep. Do logging things primarily
